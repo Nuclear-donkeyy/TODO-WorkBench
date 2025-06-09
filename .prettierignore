@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Package files
+package-lock.json
+*.tgz
+*.tar.gz
+
+# IDE and editor files
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+logs/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Git
+.git/
+
+# README files
+README.md
+CHANGELOG.md
+LICENSE
+*.md 

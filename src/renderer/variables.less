@@ -1,12 +1,60 @@
-// 颜色变量
-@primary-color: #667eea;
+// 主题色系 - 清新蓝紫色调
+@primary-color-light: #667eea;
 @primary-color-dark: #5a6fd8;
-@secondary-color: #764ba2;
-@success-color: #28a745;
-@danger-color: #ff6b6b;
-@danger-color-dark: #ff5252;
-@warning-color: #ffc107;
-@info-color: #17a2b8;
+@primary-color-lighter: #8b9df0;
+@primary-color-soft: #e8ecff;
+
+// 次主题色系 - 优雅紫色调
+@secondary-color-light: #764ba2;
+@secondary-color-dark: #6a4190;
+@secondary-color-lighter: #9d7bc4;
+@secondary-color-soft: #f0ebf7;
+
+// 选中色系 - 清新薄荷绿
+@accent-color: #00d4aa;
+@accent-color-dark: #00c499;
+@accent-color-light: #33dcbb;
+@accent-color-soft: #e6faf7;
+
+// 区域色系 - 柔和中性色
+@surface-color-primary: #ffffff;
+@surface-color-secondary: #f8fafc;
+@surface-color-tertiary: #f1f5f9;
+@surface-color-quaternary: #e2e8f0;
+
+// 背景色系 - 渐变层次
+@background-color-light: #fafbfc;
+@background-color-dark: #1a1d23;
+@background-color-overlay: rgba(255, 255, 255, 0.95);
+@background-color-modal: rgba(0, 0, 0, 0.5);
+
+// 文本色系 - 清晰层次
+@text-color-primary: #1e293b;
+@text-color-secondary: #475569;
+@text-color-tertiary: #64748b;
+@text-color-placeholder: #94a3b8;
+@text-color-disabled: #cbd5e1;
+@text-color-inverse: #ffffff;
+
+// 边框色系 - 细腻分层
+@border-color-light: #e2e8f0;
+@border-color-medium: #cbd5e1;
+@border-color-strong: #94a3b8;
+@border-color-accent: @accent-color;
+
+// 状态色系 - 语义化配色
+@success-color: #10b981;
+@success-color-light: #34d399;
+@success-color-soft: #d1fae5;
+@danger-color: #ef4444;
+@danger-color-light: #f87171;
+@danger-color-soft: #fecaca;
+@warning-color: #f59e0b;
+@warning-color-light: #fbbf24;
+@warning-color-soft: #fef3c7;
+@info-color: #3b82f6;
+@info-color-light: #60a5fa;
+@info-color-soft: #dbeafe;
 
 // 灰度色彩
 @white: #ffffff;
@@ -17,7 +65,8 @@
 @gray-900: #333;
 
 // 字体变量
-@font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+@font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+  sans-serif;
 @font-size-base: 16px;
 @font-size-small: 0.8rem;
 @font-size-large: 1.1rem;
@@ -44,9 +93,71 @@
 @border-radius-pill: 20px;
 
 // 阴影
-@box-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-@box-shadow-md: 0 10px 30px rgba(0, 0, 0, 0.2);
+@box-shadow-sm-light-scheme: 0 2px 8px rgba(0, 0, 0, 0.1);
+@box-shadow-md-light-scheme: 0 10px 30px rgba(0, 0, 0, 0.2);
+@box-shadow-sm-dark-scheme: 0 2px 8px rgba(0, 0, 0, 0.1);
+@box-shadow-md-dark-scheme: 0 10px 30px rgba(0, 0, 0, 0.2);
 
 // 过渡动画
 @transition-fast: 0.2s;
-@transition-normal: 0.3s; 
+@transition-normal: 0.3s;
+
+//当前主题颜色 - CSS变量映射
+* {
+  // 主题色
+  --primary-color: @primary-color-light;
+  --primary-color-dark: @primary-color-dark;
+  --primary-color-lighter: @primary-color-lighter;
+  --primary-color-soft: @primary-color-soft;
+
+  // 次主题色
+  --secondary-color: @secondary-color-light;
+  --secondary-color-dark: @secondary-color-dark;
+  --secondary-color-lighter: @secondary-color-lighter;
+  --secondary-color-soft: @secondary-color-soft;
+
+  // 选中色
+  --accent-color: @accent-color;
+  --accent-color-dark: @accent-color-dark;
+  --accent-color-light: @accent-color-light;
+  --accent-color-soft: @accent-color-soft;
+
+  // 区域色
+  --surface-primary: @surface-color-primary;
+  --surface-secondary: @surface-color-secondary;
+  --surface-tertiary: @surface-color-tertiary;
+  --surface-quaternary: @surface-color-quaternary;
+
+  // 背景色
+  --background-color: @background-color-light;
+  --background-overlay: @background-color-overlay;
+  --background-modal: @background-color-modal;
+
+  // 文本色
+  --text-primary: @text-color-primary;
+  --text-secondary: @text-color-secondary;
+  --text-tertiary: @text-color-tertiary;
+  --text-placeholder: @text-color-placeholder;
+  --text-disabled: @text-color-disabled;
+  --text-inverse: @text-color-inverse;
+
+  // 边框色
+  --border-light: @border-color-light;
+  --border-medium: @border-color-medium;
+  --border-strong: @border-color-strong;
+  --border-accent: @border-color-accent;
+
+  // 状态色
+  --success-color: @success-color;
+  --success-light: @success-color-light;
+  --success-soft: @success-color-soft;
+  --danger-color: @danger-color;
+  --danger-light: @danger-color-light;
+  --danger-soft: @danger-color-soft;
+  --warning-color: @warning-color;
+  --warning-light: @warning-color-light;
+  --warning-soft: @warning-color-soft;
+  --info-color: @info-color;
+  --info-light: @info-color-light;
+  --info-soft: @info-color-soft;
+}

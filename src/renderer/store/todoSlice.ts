@@ -45,14 +45,24 @@ const todoSlice = createSlice({
         todo.text = action.payload.text;
       }
     },
-    setFilter: (state, action: PayloadAction<'all' | 'active' | 'completed'>) => {
+    setFilter: (
+      state,
+      action: PayloadAction<'all' | 'active' | 'completed'>
+    ) => {
       state.filter = action.payload;
     },
-    clearCompleted: (state) => {
+    clearCompleted: state => {
       state.todos = state.todos.filter(todo => !todo.completed);
     },
   },
 });
 
-export const { addTodo, toggleTodo, deleteTodo, editTodo, setFilter, clearCompleted } = todoSlice.actions;
-export default todoSlice.reducer; 
+export const {
+  addTodo,
+  toggleTodo,
+  deleteTodo,
+  editTodo,
+  setFilter,
+  clearCompleted,
+} = todoSlice.actions;
+export default todoSlice.reducer;

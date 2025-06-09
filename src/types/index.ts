@@ -151,7 +151,7 @@ export interface ITodoApp {
   todos: ITodo[];
   currentFilter: TodoFilter;
   dataService: IDataService | null;
-  
+
   init(): Promise<void>;
   loadTodos(): Promise<void>;
   addTodo(): Promise<void>;
@@ -164,9 +164,9 @@ export interface ITodoApp {
 }
 
 // 事件类型
-export type TodoEventType = 
+export type TodoEventType =
   | 'todo:created'
-  | 'todo:updated' 
+  | 'todo:updated'
   | 'todo:deleted'
   | 'todo:completed'
   | 'todos:cleared'
@@ -209,8 +209,12 @@ export interface IServerConfig {
 export class TodoError extends Error {
   public code: string;
   public statusCode: number;
-  
-  constructor(message: string, code: string = 'TODO_ERROR', statusCode: number = 500) {
+
+  constructor(
+    message: string,
+    code: string = 'TODO_ERROR',
+    statusCode: number = 500
+  ) {
     super(message);
     this.name = 'TodoError';
     this.code = code;
@@ -223,9 +227,9 @@ export const TODO_FILTERS = ['all', 'active', 'completed'] as const;
 export const MESSAGE_TYPES = ['success', 'error', 'info', 'warning'] as const;
 export const TODO_EVENTS = [
   'todo:created',
-  'todo:updated', 
+  'todo:updated',
   'todo:deleted',
   'todo:completed',
   'todos:cleared',
-  'connection:changed'
-] as const; 
+  'connection:changed',
+] as const;
