@@ -1,0 +1,91 @@
+// 按钮混合
+.button-base() {
+  border: none;
+  border-radius: @border-radius-lg;
+  cursor: pointer;
+  font-size: @font-size-base;
+  transition: all @transition-fast;
+  padding: @spacing-md @spacing-2xl;
+}
+
+.button-primary() {
+  .button-base();
+  background: @primary-color;
+  color: @white;
+  
+  &:hover {
+    background: @primary-color-dark;
+  }
+}
+
+.button-danger() {
+  .button-base();
+  background: @danger-color;
+  color: @white;
+  
+  &:hover {
+    background: @danger-color-dark;
+  }
+}
+
+.button-secondary() {
+  .button-base();
+  background: @white;
+  border: 2px solid @gray-100;
+  color: @gray-900;
+  
+  &:hover {
+    border-color: @primary-color;
+  }
+  
+  &.active {
+    background: @primary-color;
+    color: @white;
+    border-color: @primary-color;
+  }
+}
+
+// 输入框混合
+.input-base() {
+  padding: @spacing-md @spacing-lg;
+  border: 2px solid @gray-100;
+  border-radius: @border-radius-lg;
+  font-size: @font-size-base;
+  transition: border-color @transition-fast;
+  
+  &:focus {
+    outline: none;
+    border-color: @primary-color;
+  }
+}
+
+// 卡片混合
+.card() {
+  background: @white;
+  border-radius: @border-radius-xl;
+  padding: @spacing-3xl;
+  box-shadow: @box-shadow-md;
+}
+
+// Flex布局混合
+.flex-center() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between() {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-start() {
+  display: flex;
+  align-items: center;
+}
+
+// 过渡动画混合
+.smooth-transition(@property: all, @duration: @transition-fast) {
+  transition: @property @duration;
+} 

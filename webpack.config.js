@@ -1,0 +1,50 @@
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+module.exports = {
+  mode: 'development',
+  entry: './src/renderer/index.tsx', // React入口文件
+  target: 'electron-renderer',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'renderer.js',
+    clean: false, // 不清理dist目录，保留其他文件
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js', '.jsx'],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.less$/i,
+        use: ['style-loader', 'css-loader', 'less-loader'],
+      },
+    ],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      filename: 'index.html',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'styles.css',
+          to: 'styles.css',
+          noErrorOnMissing: true, // 如果文件不存在也不报错
+        },
+      ],
+    }),
+  ],
+  devtool: 'source-map',
+}; 

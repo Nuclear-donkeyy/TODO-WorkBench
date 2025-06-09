@@ -1,0 +1,35 @@
+@import 'variables.less';
+@import 'mixins.less';
+
+.app {
+  font-family: @font-family-base;
+  width: 100%;
+  margin: 0 auto;
+  padding: @spacing-xl;
+  background: linear-gradient(135deg, @primary-color 0%, @secondary-color 100%);
+  min-height: 100vh;
+  color: @gray-900;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: @spacing-3xl;
+  color: @white;
+
+  h1 {
+    margin: 0;
+    font-size: @font-size-2xl;
+    font-weight: @font-weight-light;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: @font-size-large;
+  }
+}
+
+.main-content {
+  .card();
+} 

@@ -1,0 +1,65 @@
+@import '../variables.less';
+@import '../mixins.less';
+
+.todo-container {
+  width: 100%;
+}
+
+.add-todo-section {
+  .flex-start();
+  gap: @spacing-md;
+  margin-bottom: @spacing-3xl;
+}
+
+.todo-input {
+  .input-base();
+  flex: 1;
+}
+
+.add-btn {
+  .button-primary();
+}
+
+.filters {
+  display: flex;
+  gap: @spacing-sm;
+  margin-bottom: @spacing-3xl;
+  justify-content: center;
+}
+
+.filter-btn {
+  .button-secondary();
+  padding: @spacing-sm @spacing-lg;
+  border-radius: @border-radius-pill;
+}
+
+.todo-list-container {
+  min-height: 200px;
+  margin-bottom: @spacing-3xl;
+}
+
+.empty-state {
+  text-align: center;
+  color: @gray-300;
+  font-size: @font-size-xl;
+  padding: 3rem 0;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stats {
+  .flex-between();
+  padding-top: 1rem;
+  border-top: 1px solid @gray-100;
+  color: @gray-600;
+}
+
+.clear-btn {
+  .button-danger();
+  padding: @spacing-sm @spacing-md;
+  border-radius: @border-radius-md;
+} 
