@@ -10,6 +10,8 @@ import {
   Popconfirm,
 } from 'antd';
 import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { SkeletonLoading } from '../../components/Loading';
+import { useLoading, LoadingKeys } from '../../hooks/useLoading';
 import './index.less';
 
 interface CheckInTask {
@@ -85,53 +87,83 @@ export default function CheckPage(): JSX.Element {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<CheckInTask | null>(null);
   const [isManageMode, setIsManageMode] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [form] = Form.useForm();
+
+  // 使用统一的加载状态管理
+  const { isLoading, withLoading } = useLoading();
 
   useEffect(() => {
     setTodayTotal(tasks.length);
     setTodayCompleted(tasks.filter(task => task.isCheckedIn).length);
   }, [tasks]);
 
-  const handleCheckIn = (taskId: string) => {
-    setTasks(prevTasks =>
-      prevTasks.map(task => {
-        if (task.id === taskId && !task.isCheckedIn) {
-          message.success(`${task.title} 打卡成功！`);
-          return {
-            ...task,
-            isCheckedIn: true,
-            checkedInAt: new Date().toLocaleString(),
-            streak: task.streak + 1,
-            progress: Math.min(100, (task.progress ?? 0) + 10),
-          };
-        }
-        return task;
-      })
-    );
-  };
+  // 模拟初始加载
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitialLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
-  const handleDeleteTask = (taskId: string) => {
-    const task = tasks.find(t => t.id === taskId);
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-    message.success(`已删除打卡项：${task?.title}`);
-  };
+  const handleCheckIn = withLoading(
+    LoadingKeys.CHECKIN,
+    async (taskId: string) => {
+      // 模拟网络请求延迟
+      await new Promise(resolve => setTimeout(resolve, 800));
 
-  const handleResetCheckIn = (taskId: string) => {
-    setTasks(prevTasks =>
-      prevTasks.map(task => {
-        if (task.id === taskId && task.isCheckedIn) {
-          message.success(`${task.title} 打卡状态已重置`);
-          const { ...resetTask } = task;
-          return {
-            ...resetTask,
-            isCheckedIn: false,
-            progress: Math.max(0, (task.progress ?? 0) - 10),
-          };
-        }
-        return task;
-      })
-    );
-  };
+      setTasks(prevTasks =>
+        prevTasks.map(task => {
+          if (task.id === taskId && !task.isCheckedIn) {
+            message.success(`${task.title} 打卡成功！`);
+            return {
+              ...task,
+              isCheckedIn: true,
+              checkedInAt: new Date().toLocaleString(),
+              streak: task.streak + 1,
+              progress: Math.min(100, (task.progress ?? 0) + 10),
+            };
+          }
+          return task;
+        })
+      );
+    }
+  );
+
+  const handleDeleteTask = withLoading(
+    LoadingKeys.DELETE,
+    async (taskId: string) => {
+      // 模拟删除请求延迟
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const task = tasks.find(t => t.id === taskId);
+      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+      message.success(`已删除打卡项：${task?.title}`);
+    }
+  );
+
+  const handleResetCheckIn = withLoading(
+    LoadingKeys.RESET,
+    async (taskId: string) => {
+      // 模拟重置请求延迟
+      await new Promise(resolve => setTimeout(resolve, 400));
+
+      setTasks(prevTasks =>
+        prevTasks.map(task => {
+          if (task.id === taskId && task.isCheckedIn) {
+            message.success(`${task.title} 打卡状态已重置`);
+            const { ...resetTask } = task;
+            return {
+              ...resetTask,
+              isCheckedIn: false,
+              progress: Math.max(0, (task.progress ?? 0) - 10),
+            };
+          }
+          return task;
+        })
+      );
+    }
+  );
 
   const handleAddTask = () => {
     setEditingTask(null);
@@ -148,9 +180,12 @@ export default function CheckPage(): JSX.Element {
     setIsModalOpen(true);
   };
 
-  const handleSubmitTask = async () => {
+  const handleSubmitTask = withLoading(LoadingKeys.SUBMIT, async () => {
     try {
       const values: TaskFormData = await form.validateFields();
+
+      // 模拟提交请求延迟
+      await new Promise(resolve => setTimeout(resolve, 600));
 
       if (editingTask) {
         // 编辑已有任务
@@ -186,13 +221,41 @@ export default function CheckPage(): JSX.Element {
     } catch (error) {
       console.error('表单验证失败:', error);
     }
-  };
+  });
 
   const handleCancel = () => {
     setIsModalOpen(false);
     setEditingTask(null);
     form.resetFields();
   };
+
+  // 如果是初始加载，显示骨架屏
+  if (isInitialLoading) {
+    return (
+      <div className='check-page-container'>
+        <div className='check-header'>
+          <div className='header-content'>
+            <h1 className='page-title'>打卡管理</h1>
+            <div className='today-stats'>
+              <div className='stats-item'>
+                <span className='stats-label'>今日完成</span>
+                <span className='stats-value'>-/-</span>
+              </div>
+            </div>
+          </div>
+          <div className='header-actions'>
+            <Button size='large' loading>
+              管理模式
+            </Button>
+            <Button type='primary' size='large' loading>
+              新增打卡项
+            </Button>
+          </div>
+        </div>
+        <SkeletonLoading type='grid' rows={2} />
+      </div>
+    );
+  }
 
   return (
     <div className='check-page-container'>
@@ -312,6 +375,7 @@ export default function CheckPage(): JSX.Element {
                           className='delete-btn'
                           title='删除打卡项'
                           danger
+                          loading={isLoading(LoadingKeys.DELETE)}
                         />
                       </Popconfirm>
                     </div>
@@ -362,7 +426,12 @@ export default function CheckPage(): JSX.Element {
                         okText='确定'
                         cancelText='取消'
                       >
-                        <Button type='text' size='small' className='reset-btn'>
+                        <Button
+                          type='text'
+                          size='small'
+                          className='reset-btn'
+                          loading={isLoading(LoadingKeys.RESET)}
+                        >
                           重置
                         </Button>
                       </Popconfirm>
@@ -372,6 +441,7 @@ export default function CheckPage(): JSX.Element {
                       type='primary'
                       className='check-btn'
                       onClick={() => handleCheckIn(task.id)}
+                      loading={isLoading(LoadingKeys.CHECKIN)}
                     >
                       打卡
                     </Button>
@@ -391,6 +461,7 @@ export default function CheckPage(): JSX.Element {
         onCancel={handleCancel}
         okText={editingTask ? '保存' : '创建'}
         cancelText='取消'
+        confirmLoading={isLoading(LoadingKeys.SUBMIT)}
         width={480}
         className='task-modal'
       >

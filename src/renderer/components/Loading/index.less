@@ -1,0 +1,474 @@
+@import url(../../variables.less);
+
+// 系统级加载界面
+.system-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color-soft) 0%,
+    var(--accent-color-soft) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+
+  .loading-content {
+    text-align: center;
+    animation: fadeInUp 0.8s ease-out;
+
+    .logo-container {
+      margin-bottom: @spacing-3xl;
+
+      .logo-icon {
+        margin-bottom: @spacing-xl;
+
+        .check-circle {
+          width: 80px;
+          height: 80px;
+          border: 4px solid var(--primary-color);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto;
+          position: relative;
+          animation: pulse 2s infinite ease-in-out;
+
+          &::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid var(--accent-color);
+            border-radius: 50%;
+            animation: ripple 2s infinite ease-out;
+          }
+
+          .check-mark {
+            font-size: 32px;
+            color: var(--primary-color);
+            font-weight: bold;
+            animation: checkMark 2s infinite ease-in-out;
+          }
+        }
+      }
+
+      .app-title {
+        font-size: 36px;
+        font-weight: 700;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--accent-color)
+        );
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0 0 @spacing-sm 0;
+        animation: slideInLeft 0.8s ease-out 0.2s both;
+      }
+
+      .app-subtitle {
+        font-size: @font-size-large;
+        color: var(--text-secondary);
+        margin: 0;
+        animation: slideInRight 0.8s ease-out 0.4s both;
+      }
+    }
+
+    .loading-animation {
+      animation: slideInUp 0.8s ease-out 0.6s both;
+
+      .loading-dots {
+        display: flex;
+        justify-content: center;
+        gap: @spacing-sm;
+        margin-bottom: @spacing-lg;
+
+        .dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: var(--primary-color);
+          animation: bouncing 1.4s infinite ease-in-out;
+
+          &:nth-child(1) {
+            animation-delay: -0.32s;
+          }
+          &:nth-child(2) {
+            animation-delay: -0.16s;
+          }
+          &:nth-child(3) {
+            animation-delay: 0s;
+          }
+        }
+      }
+
+      .loading-text {
+        font-size: @font-size-base;
+        color: var(--text-tertiary);
+        margin: 0;
+      }
+    }
+  }
+}
+
+// 页面级加载
+.page-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  width: 100%;
+
+  .page-loading-content {
+    text-align: center;
+
+    .ant-spin {
+      .ant-spin-dot {
+        i {
+          background-color: var(--primary-color);
+        }
+      }
+    }
+
+    .loading-tip {
+      margin-top: @spacing-lg;
+      color: var(--text-secondary);
+      font-size: @font-size-base;
+    }
+  }
+}
+
+// 骨架屏基础样式
+.skeleton-loading {
+  .skeleton-base {
+    background: linear-gradient(
+      90deg,
+      var(--surface-secondary) 25%,
+      var(--surface-tertiary) 50%,
+      var(--surface-secondary) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite ease-in-out;
+    border-radius: @border-radius-sm;
+  }
+
+  .skeleton-avatar {
+    .skeleton-base();
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &.small {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .skeleton-title {
+    .skeleton-base();
+    height: 20px;
+    margin-bottom: @spacing-sm;
+
+    &.short {
+      width: 60%;
+    }
+  }
+
+  .skeleton-line {
+    .skeleton-base();
+    height: 16px;
+    margin-bottom: @spacing-xs;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .skeleton-button {
+    .skeleton-base();
+    height: 32px;
+    width: 80px;
+    border-radius: @border-radius-md;
+
+    &.small {
+      width: 60px;
+      height: 28px;
+    }
+  }
+
+  .skeleton-image {
+    .skeleton-base();
+    width: 100%;
+    height: 120px;
+    border-radius: @border-radius-md;
+    margin-bottom: @spacing-sm;
+  }
+}
+
+// 卡片骨架屏
+.skeleton-card {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-light);
+  border-radius: @border-radius-xl;
+  padding: @spacing-2xl;
+  margin-bottom: @spacing-lg;
+
+  .skeleton-header {
+    display: flex;
+    align-items: center;
+    gap: @spacing-md;
+    margin-bottom: @spacing-lg;
+
+    .skeleton-title {
+      flex: 1;
+    }
+  }
+
+  .skeleton-content {
+    margin-bottom: @spacing-xl;
+  }
+
+  .skeleton-footer {
+    display: flex;
+    gap: @spacing-md;
+    justify-content: flex-end;
+  }
+}
+
+// 列表骨架屏
+.skeleton-list {
+  .skeleton-list-item {
+    display: flex;
+    align-items: center;
+    gap: @spacing-md;
+    padding: @spacing-lg;
+    border-bottom: 1px solid var(--border-light);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .skeleton-content {
+      flex: 1;
+    }
+  }
+}
+
+// 网格骨架屏
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: @spacing-lg;
+
+  .skeleton-grid-item {
+    background: var(--surface-primary);
+    border: 1px solid var(--border-light);
+    border-radius: @border-radius-lg;
+    padding: @spacing-lg;
+  }
+}
+
+// 小型加载指示器
+.mini-loading {
+  .ant-spin {
+    .ant-spin-dot {
+      i {
+        background-color: var(--primary-color);
+      }
+    }
+  }
+}
+
+// 按钮加载状态
+.button-loading {
+  position: relative;
+  border: none;
+  background: var(--primary-color);
+  color: white;
+  padding: @spacing-md @spacing-lg;
+  border-radius: @border-radius-md;
+  font-size: @font-size-base;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all @transition-normal;
+  overflow: hidden;
+
+  &:hover:not(.loading) {
+    background: var(--primary-color-dark);
+    transform: translateY(-1px);
+  }
+
+  &.loading {
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
+
+  .button-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  .button-content {
+    transition: opacity @transition-normal;
+
+    &.hidden {
+      opacity: 0;
+    }
+  }
+}
+
+// 动画定义
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+@keyframes checkMark {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes bouncing {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .system-loading {
+    .loading-content {
+      padding: @spacing-2xl;
+
+      .logo-container {
+        .logo-icon .check-circle {
+          width: 60px;
+          height: 60px;
+
+          .check-mark {
+            font-size: 24px;
+          }
+        }
+
+        .app-title {
+          font-size: 28px;
+        }
+      }
+    }
+  }
+
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+}
