@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import './index.less';
 import { Button, DatePicker, Form, FormProps, Input, message } from 'antd';
-import { API, UpdateTodoParams } from '../../api';
+import { API } from '../../api';
 import dayjs from 'dayjs';
+import { UpdateTodoParams } from '@/renderer/api/TODOList/types';
 
 interface TODOItemProps {
   id?: string; // 添加id属性用于API调用

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Spin, message, Form, Input, DatePicker } from 'antd';
 import TODOItem from '../../components/TODOItem';
-import { API, TodoItem, CreateTodoParams } from '../../api';
+import { API } from '../../api';
+
 import dayjs from 'dayjs';
 import './index.less';
+import { CreateTodoParams, TodoItem } from '@/renderer/api/TODOList/types';
 
 const { RangePicker } = DatePicker;
 

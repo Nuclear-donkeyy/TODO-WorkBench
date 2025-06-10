@@ -1,11 +1,9 @@
 import {
-  TodoItem,
-  CreateTodoParams,
-  UpdateTodoParams,
   ApiResponse,
   PaginationParams,
   PaginatedResponse,
 } from '../types/todo';
+import { CreateTodoParams, TodoItem, UpdateTodoParams } from './types';
 
 // 模拟数据存储
 let mockTodos: TodoItem[] = [
@@ -45,7 +43,7 @@ let mockTodos: TodoItem[] = [
 ];
 
 // 模拟网络延迟
-const delay = (ms: number = 500) =>
+const delay = (ms: number = 500): Promise<void> =>
   new Promise(resolve => setTimeout(resolve, ms));
 
 // 生成唯一ID

@@ -1,0 +1,27 @@
+@import url('../../variables.less');
+
+.calendar-page-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    list-style: none;
+    margin-bottom: 2px;
+    font-size: 12px;
+    .ant-badge-status-text {
+      max-width: 15ch; // 限制为10个字符宽度
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+      transform: translateY(20%);
+    }
+  }
+}
