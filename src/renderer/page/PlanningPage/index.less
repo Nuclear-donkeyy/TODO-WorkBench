@@ -1,0 +1,518 @@
+@import url('../../variables.less');
+
+.planning-page {
+  padding: 24px;
+  background-color: var(--background-color);
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  font-family: @font-family-base;
+  box-sizing: border-box;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-light);
+
+    h1 {
+      margin: 0;
+      font-size: @font-size-2xl;
+      font-weight: @font-weight-bold;
+      color: var(--text-primary);
+    }
+
+    .ant-btn {
+      border-radius: @border-radius-lg;
+      height: 40px;
+      padding: 0 20px;
+      font-weight: @font-weight-bold;
+      box-shadow: @box-shadow-sm-light-scheme;
+
+      &.ant-btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+
+        &:hover {
+          background-color: var(--primary-color-dark);
+          border-color: var(--primary-color-dark);
+          transform: translateY(-1px);
+          box-shadow: @box-shadow-md-light-scheme;
+        }
+      }
+    }
+  }
+
+  .tasks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .task-card {
+      background-color: var(--surface-primary);
+      border: 1px solid var(--border-light);
+      border-radius: @border-radius-xl;
+      overflow: hidden;
+      transition: all @transition-normal ease;
+      cursor: pointer;
+      box-shadow: @box-shadow-sm-light-scheme;
+
+      &:hover {
+        box-shadow: @box-shadow-md-light-scheme;
+        border-color: var(--border-medium);
+        transform: translateY(-2px);
+      }
+
+      &.expanded {
+        cursor: default;
+        box-shadow: @box-shadow-md-light-scheme;
+        border-color: var(--accent-color);
+      }
+
+      .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        background-color: var(--surface-primary);
+        transition: background-color @transition-fast ease;
+
+        &:hover {
+          background-color: var(--surface-secondary);
+        }
+
+        .task-info {
+          flex: 1;
+
+          .task-title {
+            margin: 0;
+            font-size: @font-size-xl;
+            font-weight: @font-weight-bold;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+          }
+
+          .task-description {
+            margin: 0;
+            font-size: @font-size-small;
+            color: var(--text-secondary);
+          }
+        }
+
+        .task-progress {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+
+          .progress-text {
+            font-size: @font-size-small;
+            font-weight: @font-weight-bold;
+            color: var(--text-tertiary);
+            background-color: var(--surface-tertiary);
+            padding: 4px 8px;
+            border-radius: @border-radius-pill;
+          }
+
+          .action-buttons {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity @transition-fast ease;
+
+            .ant-btn {
+              width: 28px;
+              height: 28px;
+              border-radius: @border-radius-md;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              &:hover {
+                background-color: var(--surface-tertiary);
+              }
+
+              &.ant-btn-dangerous:hover {
+                background-color: var(--danger-soft);
+                color: var(--danger-color);
+              }
+            }
+          }
+        }
+
+        &:hover .action-buttons {
+          opacity: 1;
+        }
+      }
+
+      .task-details {
+        background-color: var(--surface-secondary);
+        border-top: 1px solid var(--border-light);
+        padding: 24px;
+
+        .progress-bar-container {
+          margin-bottom: 24px;
+
+          .ant-progress {
+            .ant-progress-bg {
+              border-radius: @border-radius-sm;
+            }
+          }
+        }
+
+        .nodes-section {
+          .nodes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+
+            h4 {
+              margin: 0;
+              font-size: @font-size-large;
+              font-weight: @font-weight-bold;
+              color: var(--text-primary);
+            }
+
+            .add-node-form {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+
+              .ant-input {
+                width: 200px;
+                border-radius: @border-radius-md;
+                border-color: var(--border-medium);
+
+                &:focus {
+                  border-color: var(--accent-color);
+                  box-shadow: 0 0 0 2px var(--accent-color-soft);
+                }
+              }
+
+              .ant-btn {
+                border-radius: @border-radius-md;
+                font-weight: @font-weight-bold;
+                background-color: var(--accent-color);
+                border-color: var(--accent-color);
+
+                &:hover {
+                  background-color: var(--accent-color-dark);
+                  border-color: var(--accent-color-dark);
+                }
+              }
+            }
+          }
+
+          .nodes-list {
+            .empty-nodes {
+              text-align: center;
+              padding: 40px 20px;
+              color: var(--text-tertiary);
+              background-color: var(--surface-tertiary);
+              border-radius: @border-radius-lg;
+              margin: 16px 0;
+
+              p {
+                margin: 0;
+                font-style: italic;
+              }
+            }
+
+            .node-item {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 12px 16px;
+              background-color: var(--surface-primary);
+              border: 1px solid var(--border-light);
+              border-radius: @border-radius-lg;
+              margin-bottom: 8px;
+              transition: all @transition-fast ease;
+
+              &:hover {
+                border-color: var(--border-medium);
+                box-shadow: @box-shadow-sm-light-scheme;
+              }
+
+              &.completed {
+                background-color: var(--success-soft);
+                border-color: var(--success-color);
+
+                .node-title {
+                  text-decoration: line-through;
+                  color: var(--text-tertiary);
+                }
+              }
+
+              .node-content {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex: 1;
+
+                .node-checkbox {
+                  width: 18px;
+                  height: 18px;
+                  border-radius: @border-radius-sm;
+                  border: 2px solid var(--border-medium);
+                  cursor: pointer;
+                  transition: all @transition-fast ease;
+
+                  &:checked {
+                    background-color: var(--accent-color);
+                    border-color: var(--accent-color);
+                  }
+
+                  &:hover {
+                    border-color: var(--accent-color);
+                  }
+                }
+
+                .node-title {
+                  font-weight: @font-weight-normal;
+                  color: var(--text-primary);
+                  flex: 1;
+                }
+
+                .node-status {
+                  font-size: @font-size-small;
+                  padding: 2px 8px;
+                  border-radius: @border-radius-pill;
+                  font-weight: @font-weight-bold;
+
+                  &.pending {
+                    background-color: var(--warning-soft);
+                    color: var(--warning-color);
+                  }
+
+                  &.in-progress {
+                    background-color: var(--info-soft);
+                    color: var(--info-color);
+                  }
+
+                  &.completed {
+                    background-color: var(--success-soft);
+                    color: var(--success-color);
+                  }
+                }
+              }
+
+              .ant-btn {
+                opacity: 0;
+                transition: opacity @transition-fast ease;
+                width: 24px;
+                height: 24px;
+                border-radius: @border-radius-sm;
+
+                &:hover {
+                  background-color: var(--danger-soft);
+                  color: var(--danger-color);
+                }
+              }
+
+              &:hover .ant-btn {
+                opacity: 1;
+              }
+            }
+          }
+
+          .task-timeline {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-light);
+
+            h4 {
+              margin: 0 0 16px 0;
+              font-size: @font-size-large;
+              font-weight: @font-weight-bold;
+              color: var(--text-primary);
+            }
+
+            .timeline-content {
+              p {
+                margin: 0 0 8px 0;
+                font-size: @font-size-small;
+                color: var(--text-secondary);
+
+                &:first-child {
+                  font-weight: @font-weight-bold;
+                }
+              }
+
+              .timeline-status {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin: 16px 0;
+                padding: 12px;
+                background-color: var(--accent-color-soft);
+                border-radius: @border-radius-lg;
+                border: 1px solid var(--accent-color);
+
+                .status-indicator {
+                  width: 12px;
+                  height: 12px;
+                  border-radius: 50%;
+                  background-color: var(--accent-color);
+
+                  &.active {
+                    animation: pulse 2s infinite;
+                  }
+                }
+
+                .time-info {
+                  margin-left: auto;
+                  font-size: @font-size-small;
+                  color: var(--text-tertiary);
+                }
+              }
+
+              .timeline-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                margin: 12px 0;
+
+                .timeline-dot {
+                  width: 8px;
+                  height: 8px;
+                  border-radius: 50%;
+                  background-color: var(--border-medium);
+                  margin-top: 6px;
+                  flex-shrink: 0;
+                }
+
+                .timeline-text {
+                  p {
+                    margin: 0;
+
+                    &:first-child {
+                      font-weight: @font-weight-bold;
+                      color: var(--text-primary);
+                    }
+
+                    &:last-child {
+                      color: var(--text-tertiary);
+                      font-size: @font-size-small;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Modal 样式覆盖
+  :global(.ant-modal) {
+    .ant-modal-content {
+      border-radius: @border-radius-xl;
+      overflow: hidden;
+    }
+
+    .ant-modal-header {
+      background-color: var(--surface-secondary);
+      border-bottom: 1px solid var(--border-light);
+
+      .ant-modal-title {
+        font-weight: @font-weight-bold;
+        color: var(--text-primary);
+      }
+    }
+
+    .ant-modal-footer {
+      border-top: 1px solid var(--border-light);
+
+      .ant-btn {
+        border-radius: @border-radius-md;
+        font-weight: @font-weight-bold;
+
+        &.ant-btn-primary {
+          background-color: var(--primary-color);
+          border-color: var(--primary-color);
+
+          &:hover {
+            background-color: var(--primary-color-dark);
+            border-color: var(--primary-color-dark);
+          }
+        }
+      }
+    }
+
+    .ant-input {
+      border-radius: @border-radius-md;
+      border-color: var(--border-medium);
+
+      &:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 2px var(--accent-color-soft);
+      }
+    }
+  }
+}
+
+// 脉冲动画
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .planning-page {
+    padding: 16px;
+
+    .page-header {
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch;
+
+      .ant-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .task-card {
+      .task-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+
+        .task-progress {
+          justify-content: space-between;
+        }
+      }
+
+      .task-details {
+        padding: 16px;
+
+        .nodes-header {
+          flex-direction: column;
+          gap: 12px;
+          align-items: stretch;
+
+          .add-node-form {
+            .ant-input {
+              flex: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+}

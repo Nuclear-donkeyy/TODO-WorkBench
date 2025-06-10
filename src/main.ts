@@ -24,8 +24,14 @@ function createWindow(): void {
     ...electronConfig,
     icon: path.join(__dirname, 'assets/icon.png'),
     autoHideMenuBar: true, // 隐藏菜单栏
+    minWidth: 800, // 最小宽度
+    minHeight: 600, // 最小高度
+    fullscreenable: true, // 允许全屏
+    maximizable: true, // 允许最大化
+    resizable: true, // 允许调整大小
     webPreferences: {
       ...electronConfig.webPreferences,
+      enablePreferredSizeMode: true, // 启用首选大小模式
     },
   });
 
@@ -42,9 +48,33 @@ function createWindow(): void {
     mainWindow.loadFile(path.join(__dirname, './index.html'));
     console.log('生产模式：加载文件 ' + path.join(__dirname, './index.html'));
   }
+
   mainWindow.once('ready-to-show', (): void => {
     if (mainWindow) {
       mainWindow.show();
+      // 确保窗口焦点
+      mainWindow.focus();
+    }
+  });
+
+  // 监听窗口大小变化，确保内容适应
+  mainWindow.on('resize', () => {
+    if (mainWindow) {
+      // 发送窗口大小变化事件到渲染进程
+      mainWindow.webContents.send('window-resize', mainWindow.getSize());
+    }
+  });
+
+  // 监听全屏状态变化
+  mainWindow.on('enter-full-screen', () => {
+    if (mainWindow) {
+      mainWindow.webContents.send('enter-full-screen');
+    }
+  });
+
+  mainWindow.on('leave-full-screen', () => {
+    if (mainWindow) {
+      mainWindow.webContents.send('leave-full-screen');
     }
   });
 

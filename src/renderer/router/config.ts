@@ -34,6 +34,11 @@ export const routers: Array<IRouter> = [
         component: React.lazy(() => import('../page/CheckPage')),
       },
       {
+        name: '长期计划',
+        path: 'planning',
+        component: React.lazy(() => import('../page/PlanningPage')),
+      },
+      {
         name: '设置',
         path: 'setting',
         component: React.lazy(() => import('../page/SettingPage')),

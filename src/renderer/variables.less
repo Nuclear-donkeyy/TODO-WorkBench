@@ -103,6 +103,12 @@
 @transition-normal: 0.3s;
 
 //当前主题颜色 - CSS变量映射
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 * {
   // 主题色
   --primary-color: @primary-color-light;
