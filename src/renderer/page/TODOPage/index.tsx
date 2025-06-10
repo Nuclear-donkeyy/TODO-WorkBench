@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Spin, message, Form, Input, DatePicker } from 'antd';
 import TODOItem from '../../components/TODOItem';
 import { API, TodoItem, CreateTodoParams } from '../../api';
+import dayjs from 'dayjs';
 import './index.less';
 
 const { RangePicker } = DatePicker;
@@ -9,7 +10,7 @@ const { RangePicker } = DatePicker;
 type CreateFormFields = {
   taskname: string;
   taskDesc?: string;
-  taskPeriod?: any;
+  taskPeriod?: [dayjs.Dayjs, dayjs.Dayjs];
 };
 
 export default function TODOPage(): JSX.Element {
