@@ -1,0 +1,214 @@
+// 引入设计令牌
+@import '../../styles/tokens.less';
+
+/* 主布局组件 */
+.ds-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+
+  &--horizontal {
+    flex-direction: row;
+  }
+
+  &--vertical {
+    flex-direction: column;
+  }
+}
+
+/* 侧边栏组件 */
+.ds-sidebar {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  transition: all var(--transition-normal);
+  z-index: var(--z-sticky);
+
+  &--left {
+    border-right: 1px solid var(--color-border);
+  }
+
+  &--right {
+    border-left: 1px solid var(--color-border);
+  }
+
+  &--collapsible {
+    overflow: hidden;
+  }
+
+  &--collapsed {
+    width: 64px !important;
+    min-width: 64px;
+
+    .ds-sidebar__content {
+      padding: var(--spacing-sm);
+    }
+  }
+
+  &__content {
+    flex: 1;
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    /* 自定义滚动条 */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--color-neutral-100);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-neutral-300);
+      border-radius: var(--border-radius-sm);
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: var(--color-neutral-400);
+    }
+  }
+}
+
+/* 主内容区域组件 */
+.ds-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background);
+  overflow: hidden;
+
+  &--padding-none {
+    padding: 0;
+  }
+
+  &--padding-sm {
+    padding: var(--spacing-sm);
+  }
+
+  &--padding-md {
+    padding: var(--spacing-lg);
+  }
+
+  &--padding-lg {
+    padding: var(--spacing-xl);
+  }
+}
+
+/* 头部组件 */
+.ds-header {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  z-index: var(--z-sticky);
+
+  &--fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-fixed);
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-lg);
+    height: 100%;
+  }
+}
+
+/* 底部组件 */
+.ds-footer {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+
+  &--fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-fixed);
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+    height: 100%;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .ds-sidebar {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    z-index: var(--z-modal);
+
+    &--left {
+      left: 0;
+    }
+
+    &--right {
+      right: 0;
+    }
+
+    &__content {
+      padding: var(--spacing-md);
+    }
+  }
+
+  .ds-content {
+    &--padding-md {
+      padding: var(--spacing-md);
+    }
+
+    &--padding-lg {
+      padding: var(--spacing-lg);
+    }
+  }
+
+  .ds-header__content,
+  .ds-footer__content {
+    padding: 0 var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .ds-sidebar {
+    width: 100vw !important;
+
+    &__content {
+      padding: var(--spacing-sm);
+    }
+  }
+
+  .ds-content {
+    &--padding-sm {
+      padding: var(--spacing-xs);
+    }
+
+    &--padding-md {
+      padding: var(--spacing-sm);
+    }
+
+    &--padding-lg {
+      padding: var(--spacing-md);
+    }
+  }
+
+  .ds-header__content,
+  .ds-footer__content {
+    padding: 0 var(--spacing-sm);
+  }
+}

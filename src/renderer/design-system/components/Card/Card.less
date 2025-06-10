@@ -1,0 +1,161 @@
+// 引入设计令牌
+@import '../../styles/tokens.less';
+
+.ds-card {
+  /* 基础样式 */
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+
+  /* 变体样式 */
+  &--default {
+    border: 1px solid var(--color-border);
+  }
+
+  &--elevated {
+    border: none;
+    box-shadow: var(--shadow-md);
+  }
+
+  &--outlined {
+    border: 2px solid var(--color-border);
+    background-color: transparent;
+  }
+
+  &--ghost {
+    border: none;
+    background-color: transparent;
+  }
+
+  /* 内边距变体 */
+  &--padding-none {
+    padding: 0;
+  }
+
+  &--padding-sm {
+    padding: var(--spacing-sm);
+  }
+
+  &--padding-md {
+    padding: var(--spacing-lg);
+  }
+
+  &--padding-lg {
+    padding: var(--spacing-xl);
+  }
+
+  /* 交互状态 */
+  &--hoverable {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+  }
+
+  &--clickable {
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  /* 子组件样式 */
+  &__header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+
+    /* 如果是第一个子元素，移除上内边距 */
+    &:first-child {
+      border-top-left-radius: inherit;
+      border-top-right-radius: inherit;
+    }
+
+    /* 头部标题样式 */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 0;
+      color: var(--color-text-primary);
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+
+  &__body {
+    flex: 1;
+    padding: var(--spacing-lg);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-relaxed);
+
+    /* 调整段落间距 */
+    p {
+      margin: 0 0 var(--spacing-md) 0;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &__footer {
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+    background-color: rgba(var(--color-surface), 0.5);
+
+    /* 如果是最后一个子元素，移除下内边距 */
+    &:last-child {
+      border-bottom-left-radius: inherit;
+      border-bottom-right-radius: inherit;
+    }
+  }
+
+  /* 特殊组合样式 */
+  &--padding-none &__header,
+  &--padding-none &__body,
+  &--padding-none &__footer {
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+  }
+
+  &--padding-sm &__header,
+  &--padding-sm &__body,
+  &--padding-sm &__footer {
+    padding: var(--spacing-sm);
+  }
+
+  &--padding-lg &__header,
+  &--padding-lg &__body,
+  &--padding-lg &__footer {
+    padding: var(--spacing-xl);
+  }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .ds-card {
+    &--padding-md &__header,
+    &--padding-md &__body,
+    &--padding-md &__footer {
+      padding: var(--spacing-md);
+    }
+
+    &--padding-lg &__header,
+    &--padding-lg &__body,
+    &--padding-lg &__footer {
+      padding: var(--spacing-lg);
+    }
+  }
+}

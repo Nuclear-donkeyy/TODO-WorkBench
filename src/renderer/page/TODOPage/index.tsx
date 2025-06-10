@@ -14,6 +14,7 @@ import {
   ClockCircleOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
+import { Card, CardHeader, CardBody } from '../../design-system/components';
 import TODOItem from '../../components/TODOItem';
 import { API } from '../../api';
 
@@ -220,153 +221,167 @@ export default function TODOPage(): JSX.Element {
 
   return (
     <div className='todo-page-container'>
-      <div className='todo-header'>
-        <div className='header-title'>
-          <h2>我的任务</h2>
-          <div className='task-stats'>
-            <span className='stat-item active'>
-              <ClockCircleOutlined />
-              {activeTodos.length} 进行中
-            </span>
-            <span className='stat-item completed'>
-              <CheckCircleOutlined />
-              {completedTodos.length} 已完成
-            </span>
+      {/* 页面头部 */}
+      <Card variant='elevated' className='todo-header-card' padding='lg'>
+        <div className='todo-header-content'>
+          <div className='header-title'>
+            <h2>我的任务</h2>
+            <div className='task-stats'>
+              <span className='stat-item active'>
+                <ClockCircleOutlined />
+                {activeTodos.length} 进行中
+              </span>
+              <span className='stat-item completed'>
+                <CheckCircleOutlined />
+                {completedTodos.length} 已完成
+              </span>
+            </div>
           </div>
-        </div>
-        <div className='todo-actions'>
-          <Button
-            type='primary'
-            icon={<PlusOutlined />}
-            onClick={toggleCreateForm}
-            className='create-btn'
-          >
-            {showCreateForm ? '取消添加' : '添加任务'}
-          </Button>
-          <Button
-            onClick={fetchTodos}
-            disabled={loading}
-            className='refresh-btn'
-          >
-            刷新
-          </Button>
-        </div>
-      </div>
-
-      {/* 创建任务表单 */}
-      {showCreateForm && (
-        <div className='create-form-container'>
-          <div className='form-header'>
-            <h3>创建新任务</h3>
-          </div>
-          <Form
-            form={createForm}
-            layout='vertical'
-            onFinish={handleCreateSubmit}
-            className='create-form'
-          >
-            <Form.Item
-              label='任务名称'
-              name='taskname'
-              rules={[{ required: true, message: '请输入任务名称' }]}
+          <div className='todo-actions'>
+            <Button
+              type='primary'
+              icon={<PlusOutlined />}
+              onClick={toggleCreateForm}
+              className='create-btn'
             >
-              <Input placeholder='请输入任务名称' size='large' />
-            </Form.Item>
-
-            <Form.Item label='任务描述' name='taskDesc'>
-              <Input.TextArea
-                placeholder='请输入任务描述（可选）'
-                rows={3}
-                showCount
-                maxLength={200}
-              />
-            </Form.Item>
-
-            <Form.Item label='任务期限' name='taskPeriod'>
-              <RangePicker
-                style={{ width: '100%' }}
-                size='large'
-                placeholder={['开始日期', '结束日期']}
-              />
-            </Form.Item>
-
-            <Form.Item>
-              <div className='form-actions'>
-                <Button
-                  type='primary'
-                  htmlType='submit'
-                  loading={creating}
-                  disabled={creating}
-                  size='large'
-                  icon={<PlusOutlined />}
-                >
-                  {creating ? '创建中...' : '创建任务'}
-                </Button>
-                <Button
-                  onClick={toggleCreateForm}
-                  disabled={creating}
-                  size='large'
-                >
-                  取消
-                </Button>
-              </div>
-            </Form.Item>
-          </Form>
+              {showCreateForm ? '取消添加' : '添加任务'}
+            </Button>
+            <Button
+              onClick={fetchTodos}
+              disabled={loading}
+              className='refresh-btn'
+            >
+              刷新
+            </Button>
+          </div>
         </div>
-      )}
+      </Card>
 
-      {/* 任务列表区域 */}
-      <div className='todo-content'>
-        <Tabs
-          activeKey={activeTab}
-          onChange={setActiveTab}
-          className='todo-tabs'
-          size='large'
-        >
-          <TabPane
-            tab={
-              <Badge
-                count={activeTodos.length}
-                showZero
-                style={{ backgroundColor: '#1890ff' }}
+      {/* 滚动容器 */}
+      <div className='todo-main-content'>
+        {/* 创建任务表单 */}
+        {showCreateForm && (
+          <Card variant='elevated' className='create-form-card' padding='none'>
+            <CardHeader>
+              <h3>创建新任务</h3>
+            </CardHeader>
+            <CardBody>
+              <Form
+                form={createForm}
+                layout='vertical'
+                onFinish={handleCreateSubmit}
+                className='create-form'
               >
-                <span className='tab-label'>
-                  <ClockCircleOutlined />
-                  进行中
-                </span>
-              </Badge>
-            }
-            key='active'
-          >
-            <Spin spinning={loading}>
-              <div className='todo-list active-todos'>
-                {renderTodoList(activeTodos)}
-              </div>
-            </Spin>
-          </TabPane>
+                <Form.Item
+                  label='任务名称'
+                  name='taskname'
+                  rules={[{ required: true, message: '请输入任务名称' }]}
+                >
+                  <Input placeholder='请输入任务名称' size='large' />
+                </Form.Item>
 
-          <TabPane
-            tab={
-              <Badge
-                count={completedTodos.length}
-                showZero
-                style={{ backgroundColor: '#52c41a' }}
+                <Form.Item label='任务描述' name='taskDesc'>
+                  <Input.TextArea
+                    placeholder='请输入任务描述（可选）'
+                    rows={3}
+                    showCount
+                    maxLength={200}
+                  />
+                </Form.Item>
+
+                <Form.Item label='任务期限' name='taskPeriod'>
+                  <RangePicker
+                    style={{ width: '100%' }}
+                    size='large'
+                    placeholder={['开始日期', '结束日期']}
+                  />
+                </Form.Item>
+
+                <Form.Item>
+                  <div className='form-actions'>
+                    <Button
+                      type='primary'
+                      htmlType='submit'
+                      loading={creating}
+                      disabled={creating}
+                      size='large'
+                      icon={<PlusOutlined />}
+                    >
+                      {creating ? '创建中...' : '创建任务'}
+                    </Button>
+                    <Button
+                      onClick={toggleCreateForm}
+                      disabled={creating}
+                      size='large'
+                    >
+                      取消
+                    </Button>
+                  </div>
+                </Form.Item>
+              </Form>
+            </CardBody>
+          </Card>
+        )}
+
+        {/* 任务列表区域 */}
+        <Card variant='elevated' className='todo-content-card' padding='none'>
+          <div className='todo-tabs-container'>
+            <Tabs
+              activeKey={activeTab}
+              onChange={setActiveTab}
+              className='todo-tabs'
+              size='large'
+            >
+              <TabPane
+                tab={
+                  <Badge
+                    count={activeTodos.length}
+                    showZero
+                    style={{ backgroundColor: '#1890ff' }}
+                  >
+                    <span className='tab-label'>
+                      <ClockCircleOutlined />
+                      进行中
+                    </span>
+                  </Badge>
+                }
+                key='active'
               >
-                <span className='tab-label'>
-                  <CheckCircleOutlined />
-                  已完成
-                </span>
-              </Badge>
-            }
-            key='completed'
-          >
-            <Spin spinning={loading}>
-              <div className='todo-list completed-todos'>
-                {renderTodoList(completedTodos)}
-              </div>
-            </Spin>
-          </TabPane>
-        </Tabs>
+                <div className='todo-list-wrapper'>
+                  <Spin spinning={loading}>
+                    <div className='todo-list active-todos'>
+                      {renderTodoList(activeTodos)}
+                    </div>
+                  </Spin>
+                </div>
+              </TabPane>
+
+              <TabPane
+                tab={
+                  <Badge
+                    count={completedTodos.length}
+                    showZero
+                    style={{ backgroundColor: '#52c41a' }}
+                  >
+                    <span className='tab-label'>
+                      <CheckCircleOutlined />
+                      已完成
+                    </span>
+                  </Badge>
+                }
+                key='completed'
+              >
+                <div className='todo-list-wrapper'>
+                  <Spin spinning={loading}>
+                    <div className='todo-list completed-todos'>
+                      {renderTodoList(completedTodos)}
+                    </div>
+                  </Spin>
+                </div>
+              </TabPane>
+            </Tabs>
+          </div>
+        </Card>
       </div>
     </div>
   );

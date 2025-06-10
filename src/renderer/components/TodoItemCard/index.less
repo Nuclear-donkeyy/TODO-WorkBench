@@ -1,57 +1,156 @@
+// 引入设计令牌
+@import '../../design-system/styles/tokens.less';
+
 .todo-item-card {
-  background: #f8f9fa;
-  border-left: 3px solid #6366f1;
-  border-radius: 0 4px 4px 0;
-  padding: 6px 8px;
-  margin-bottom: 2px;
-  position: relative;
-  transition: all 0.2s ease;
-  cursor: pointer;
+  /* 基础样式 */
+  margin-bottom: var(--spacing-md);
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  transition: all var(--transition-normal);
 
-  &:hover {
-    background: #e5e7eb;
-    transform: translateX(2px);
+  /* 内容布局 */
+  &__content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    width: 100%;
   }
 
-  &.compact {
-    padding: 3px 6px;
-    margin-bottom: 1px;
+  &__text-wrapper {
+    flex: 1;
+    min-width: 0; /* 防止文本溢出 */
+  }
 
-    .todo-content {
-      font-size: 11px;
-      line-height: 1.2;
+  &__text {
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-relaxed);
+    word-break: break-word;
+    transition: all var(--transition-normal);
+  }
+
+  &__status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-xs);
+  }
+
+  &__check-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+
+    font-size: var(--font-size-xs);
+    font-style: normal;
+    color: var(--color-success);
+
+    border-radius: var(--border-radius-full);
+    background-color: var(--color-success-light);
+  }
+
+  &__status-text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    font-weight: var(--font-weight-medium);
+  }
+
+  &__completed-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+
+    background-color: var(--color-success);
+    color: var(--color-text-inverse);
+
+    border-radius: var(--border-radius-full);
+    font-size: var(--font-size-lg);
+
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+  }
+
+  /* 紧凑模式 */
+  &--compact {
+    margin-bottom: var(--spacing-sm);
+
+    .todo-item-card__content {
+      gap: var(--spacing-sm);
+    }
+
+    .todo-item-card__text {
+      font-size: var(--font-size-sm);
+      line-height: var(--line-height-normal);
+    }
+
+    .todo-item-card__completed-badge {
+      width: 24px;
+      height: 24px;
+      font-size: var(--font-size-base);
     }
   }
 
-  &.completed {
-    opacity: 0.6;
+  /* 完成状态 */
+  &--completed {
+    opacity: 0.8;
 
-    .todo-content {
+    .todo-item-card__text {
       text-decoration: line-through;
-      color: #6b7280;
+      color: var(--color-text-tertiary);
+    }
+
+    /* 悬停时恢复不透明度 */
+    &:hover {
+      opacity: 1;
     }
   }
 
-  .todo-content {
-    font-size: 12px;
-    color: #374151;
-    line-height: 1.3;
-    word-break: break-all;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-right: 16px;
+  /* 悬停效果 */
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+
+    .todo-item-card__completed-badge {
+      transform: scale(1.1);
+      box-shadow: var(--shadow-md);
+    }
   }
 
-  .completed-mark {
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #10b981;
-    font-size: 12px;
-    font-weight: bold;
+  /* 聚焦状态 */
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    &__content {
+      gap: var(--spacing-sm);
+    }
+
+    &__text {
+      font-size: var(--font-size-sm);
+    }
+
+    &__completed-badge {
+      width: 28px;
+      height: 28px;
+      font-size: var(--font-size-base);
+    }
+
+    &--compact {
+      .todo-item-card__completed-badge {
+        width: 20px;
+        height: 20px;
+        font-size: var(--font-size-sm);
+      }
+    }
   }
 }

@@ -1,8 +1,12 @@
 import './index.less';
-import { useNavigate, useLocation } from 'react-router-dom';
-import MenuItem, { type MenuItemProp } from '../components/MenuItem';
-import { Outlet } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useEffect } from 'react';
+import {
+  Layout,
+  Sidebar,
+  Content,
+} from '../design-system/components/Layout/Layout';
+import MenuItem, { type MenuItemProp } from '../components/MenuItem';
 import useWindowSize from '../hooks/useWindowSize';
 
 export default function App(): JSX.Element {
@@ -23,7 +27,6 @@ export default function App(): JSX.Element {
 
   // 响应窗口大小变化
   useEffect(() => {
-    // 当窗口大小变化时，可以在这里进行一些布局调整
     console.log('窗口大小变化:', windowSize);
 
     // 确保文档元素能够正确适应窗口大小
@@ -79,36 +82,40 @@ export default function App(): JSX.Element {
   ];
 
   return (
-    <div
-      className='app-container'
-      style={{
-        width: '100%',
-        height: '100vh',
-      }}
-    >
-      <div className='leftSide-bar'>
-        {menuItemProps.map((item, index) => {
-          // 检查当前路由是否匹配
-          const currentRoute = routeMap[item.name];
-          const isActive =
-            location.pathname === `/${currentRoute}` ||
-            (location.pathname === '/' && currentRoute === 'todoList'); // 默认路由
+    <Layout direction='horizontal' className='app-layout'>
+      <Sidebar width={280} position='left' className='app-sidebar'>
+        <div className='app-sidebar__header'>
+          <h1 className='app-title'>TODO WorkBench</h1>
+          <p className='app-subtitle'>高效任务管理工具</p>
+        </div>
 
-          return (
-            <MenuItem
-              name={item.name}
-              icon={item.icon}
-              {...(item.cnt !== undefined && { cnt: item.cnt })}
-              key={index}
-              callback={item.callback}
-              isActive={isActive}
-            />
-          );
-        })}
-      </div>
-      <div className='content-container'>
-        <Outlet />
-      </div>
-    </div>
+        <nav className='app-navigation'>
+          {menuItemProps.map((item, index) => {
+            // 检查当前路由是否匹配
+            const currentRoute = routeMap[item.name];
+            const isActive =
+              location.pathname === `/${currentRoute}` ||
+              (location.pathname === '/' && currentRoute === 'todoList'); // 默认路由
+
+            return (
+              <MenuItem
+                key={index}
+                name={item.name}
+                icon={item.icon}
+                {...(item.cnt !== undefined && { cnt: item.cnt })}
+                callback={item.callback}
+                isActive={isActive}
+              />
+            );
+          })}
+        </nav>
+      </Sidebar>
+
+      <Content padding='lg' className='app-content'>
+        <div className='app-content__wrapper'>
+          <Outlet />
+        </div>
+      </Content>
+    </Layout>
   );
 }

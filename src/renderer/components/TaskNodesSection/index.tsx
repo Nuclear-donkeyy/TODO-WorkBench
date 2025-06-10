@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Input, Button } from 'antd';
-import TaskNode, { TaskNode as TaskNodeType } from '../TaskNode';
+import { DeleteOutlined } from '@ant-design/icons';
+import { TaskNode as TaskNodeType } from '../TaskNode';
 import './index.less';
 
 interface TaskNodesSectionProps {
@@ -29,6 +30,32 @@ export default function TaskNodesSection(
     }
   };
 
+  const getStatusText = (status: string): string => {
+    switch (status) {
+      case 'completed':
+        return '已完成';
+      case 'in-progress':
+        return '进行中';
+      default:
+        return '待开始';
+    }
+  };
+
+  const formatTime = (timeString: string): string => {
+    try {
+      const date = new Date(timeString);
+      return date.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return timeString;
+    }
+  };
+
   return (
     <div className='task-nodes-section'>
       <div className='nodes-header'>
@@ -52,44 +79,78 @@ export default function TaskNodesSection(
         </div>
       </div>
 
-      <div className='nodes-list'>
+      <div className='task-timeline'>
         {nodes.length === 0 ? (
           <div className='empty-nodes'>
             <p>暂无节点，点击上方&quot;新增&quot;按钮添加第一个节点</p>
           </div>
         ) : (
-          nodes.map(node => (
-            <TaskNode
-              key={node.id}
-              node={node}
-              onToggleComplete={() => onToggleNodeComplete(node.id)}
-              onDelete={() => onDeleteNode(node.id)}
-            />
-          ))
+          <div className='timeline-content'>
+            <div className='timeline-header'>
+              <p>任务进度时间线</p>
+              <p>
+                共 {nodes.length} 个节点，已完成{' '}
+                {nodes.filter(n => n.completed).length} 个
+              </p>
+            </div>
+
+            {nodes.map((node, index) => (
+              <div
+                key={node.id}
+                className={`timeline-node ${node.completed ? 'completed' : ''} ${node.status}`}
+              >
+                <div className='timeline-left'>
+                  <div
+                    className={`timeline-dot ${node.completed ? 'completed' : ''} ${node.status}`}
+                  >
+                    {node.completed && <span className='check-mark'>✓</span>}
+                  </div>
+                  {index < nodes.length - 1 && (
+                    <div className='timeline-line'></div>
+                  )}
+                </div>
+
+                <div className='timeline-right'>
+                  <div className='timeline-card'>
+                    <div className='card-header'>
+                      <div className='card-title'>
+                        <input
+                          type='checkbox'
+                          checked={node.completed}
+                          onChange={() => onToggleNodeComplete(node.id)}
+                          className='node-checkbox'
+                        />
+                        <span
+                          className={`node-title ${node.completed ? 'completed' : ''}`}
+                        >
+                          {node.title}
+                        </span>
+                      </div>
+                      <Button
+                        type='text'
+                        size='small'
+                        icon={<DeleteOutlined />}
+                        danger
+                        onClick={() => onDeleteNode(node.id)}
+                        className='delete-btn'
+                      />
+                    </div>
+
+                    <div className='card-meta'>
+                      <span className={`status-badge ${node.status}`}>
+                        {getStatusText(node.status)}
+                      </span>
+                      <span className='time-info'>
+                        创建于 {formatTime(node.createdAt)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
-
-      {nodes.length > 0 && (
-        <div className='task-timeline'>
-          <h4>时间规划</h4>
-          <div className='timeline-content'>
-            <p>计划开始时间: 2022-5-24 14:43</p>
-            <p>计划进行时间: 0天</p>
-            <div className='timeline-status'>
-              <div className='status-indicator active'></div>
-              <span>看一本书</span>
-              <span className='time-info'>2022-5-24 14:43至今</span>
-            </div>
-            <div className='timeline-item'>
-              <div className='timeline-dot'></div>
-              <div className='timeline-text'>
-                <p>看两本书</p>
-                <p>未开始</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
