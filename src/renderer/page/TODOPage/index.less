@@ -1,0 +1,146 @@
+@import url(../../variables.less);
+.todo-page-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  background-color: var(--background-color);
+
+  .todo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-light);
+
+    h2 {
+      margin: 0;
+      color: var(--text-primary);
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .todo-actions {
+      display: flex;
+      gap: 12px;
+
+      .ant-btn {
+        border-radius: 6px;
+      }
+    }
+  }
+
+  .todo-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 8px;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--surface-tertiary);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-medium);
+      border-radius: 3px;
+
+      &:hover {
+        background: var(--border-strong);
+      }
+    }
+  }
+
+  .empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    background-color: var(--surface-secondary);
+    border-radius: 8px;
+    border: 2px dashed var(--border-light);
+
+    p {
+      color: var(--text-tertiary);
+      font-size: 16px;
+      margin: 0;
+    }
+  }
+
+  // 加载状态样式
+  .ant-spin-container {
+    min-height: 200px;
+  }
+
+  // 创建任务表单样式
+  .create-form-container {
+    background-color: var(--surface-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+    animation: slideDown 0.3s ease-out;
+
+    .ant-form {
+      .ant-form-item-label {
+        label {
+          color: var(--text-secondary);
+          font-weight: 500;
+        }
+      }
+
+      .ant-input,
+      .ant-input-affix-wrapper,
+      .ant-picker {
+        border-radius: 6px;
+        border-color: var(--border-medium);
+
+        &:focus,
+        &:hover {
+          border-color: var(--accent-color);
+        }
+      }
+
+      .ant-input::placeholder,
+      .ant-input-affix-wrapper input::placeholder {
+        color: var(--text-placeholder);
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 12px;
+
+        .ant-btn {
+          border-radius: 6px;
+        }
+
+        .ant-btn-primary {
+          background-color: var(--primary-color);
+          border-color: var(--primary-color);
+
+          &:hover:not(:disabled) {
+            background-color: var(--primary-color-dark);
+            border-color: var(--primary-color-dark);
+          }
+        }
+      }
+    }
+  }
+
+  // 展开动画
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
