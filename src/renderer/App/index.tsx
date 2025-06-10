@@ -18,6 +18,7 @@ export default function App(): JSX.Element {
     打卡: 'checkList',
     计划: 'planning',
     设置: 'setting',
+    测试: 'test',
   };
 
   // 响应窗口大小变化
@@ -69,6 +70,11 @@ export default function App(): JSX.Element {
       name: '设置',
       icon: 'icon-daka',
       callback: () => navigate(routeMap['设置']),
+    },
+    {
+      name: '测试',
+      icon: 'icon-daka',
+      callback: () => navigate(routeMap['测试']),
     },
   ];
 

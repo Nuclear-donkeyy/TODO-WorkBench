@@ -5,18 +5,9 @@ import {
   EllipsisOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
+import { TaskNode } from '@/renderer/components/TaskNode';
+import TaskNodesSection from '@/renderer/components/TaskNodesSection';
 import './index.less';
-
-// 任务节点接口
-interface TaskNode {
-  id: string;
-  title: string;
-  completed: boolean;
-  createdAt: string;
-  plannedStartTime?: string;
-  plannedEndTime?: string;
-  status: 'pending' | 'in-progress' | 'completed';
-}
 
 // 计划任务接口
 interface PlanTask {
@@ -33,7 +24,6 @@ export default function PlanningPage(): JSX.Element {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [expandedTask, setExpandedTask] = useState<string | null>(null);
-  const [newNodeTitle, setNewNodeTitle] = useState('');
 
   // 初始化示例数据
   useEffect(() => {
@@ -239,15 +229,15 @@ export default function PlanningPage(): JSX.Element {
   };
 
   // 添加任务节点
-  const handleAddNode = (taskId: string): void => {
-    if (!newNodeTitle.trim()) {
+  const handleAddNode = (taskId: string, title: string): void => {
+    if (!title.trim()) {
       message.error('请输入节点标题');
       return;
     }
 
     const newNode: TaskNode = {
       id: `${taskId}-${Date.now()}`,
-      title: newNodeTitle,
+      title: title.trim(),
       completed: false,
       createdAt: new Date().toISOString(),
       status: 'pending',
@@ -265,7 +255,6 @@ export default function PlanningPage(): JSX.Element {
       )
     );
 
-    setNewNodeTitle('');
     message.success('节点添加成功');
   };
 
@@ -375,92 +364,16 @@ export default function PlanningPage(): JSX.Element {
                     />
                   </div>
 
-                  <div className='nodes-section'>
-                    <div className='nodes-header'>
-                      <h4>任务节点</h4>
-                      <div className='add-node-form'>
-                        <Input
-                          placeholder='输入节点标题'
-                          value={newNodeTitle}
-                          onChange={e => setNewNodeTitle(e.target.value)}
-                          onPressEnter={() => handleAddNode(task.id)}
-                          style={{ marginRight: 8 }}
-                        />
-                        <Button
-                          type='primary'
-                          size='small'
-                          onClick={() => handleAddNode(task.id)}
-                        >
-                          新增
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className='nodes-list'>
-                      {task.nodes.length === 0 ? (
-                        <div className='empty-nodes'>
-                          <p>暂无节点，点击上方"新增"按钮添加第一个节点</p>
-                        </div>
-                      ) : (
-                        task.nodes.map(node => (
-                          <div
-                            key={node.id}
-                            className={`node-item ${node.completed ? 'completed' : ''}`}
-                          >
-                            <div className='node-content'>
-                              <input
-                                type='checkbox'
-                                checked={node.completed}
-                                onChange={() =>
-                                  toggleNodeComplete(task.id, node.id)
-                                }
-                                className='node-checkbox'
-                              />
-                              <span className='node-title'>{node.title}</span>
-                              <span className={`node-status ${node.status}`}>
-                                {node.status === 'completed'
-                                  ? '已完成'
-                                  : node.status === 'in-progress'
-                                    ? '进行中'
-                                    : '待开始'}
-                              </span>
-                            </div>
-                            <Button
-                              type='text'
-                              size='small'
-                              icon={<DeleteOutlined />}
-                              danger
-                              onClick={() => handleDeleteNode(task.id, node.id)}
-                            />
-                          </div>
-                        ))
-                      )}
-                    </div>
-
-                    {task.nodes.length > 0 && (
-                      <div className='task-timeline'>
-                        <h4>时间规划</h4>
-                        <div className='timeline-content'>
-                          <p>计划开始时间: 2022-5-24 14:43</p>
-                          <p>计划进行时间: 0天</p>
-                          <div className='timeline-status'>
-                            <div className='status-indicator active'></div>
-                            <span>看一本书</span>
-                            <span className='time-info'>
-                              2022-5-24 14:43至今
-                            </span>
-                          </div>
-                          <div className='timeline-item'>
-                            <div className='timeline-dot'></div>
-                            <div className='timeline-text'>
-                              <p>看两本书</p>
-                              <p>未开始</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <TaskNodesSection
+                    nodes={task.nodes}
+                    onAddNode={(title: string) => handleAddNode(task.id, title)}
+                    onToggleNodeComplete={(nodeId: string) =>
+                      toggleNodeComplete(task.id, nodeId)
+                    }
+                    onDeleteNode={(nodeId: string) =>
+                      handleDeleteNode(task.id, nodeId)
+                    }
+                  />
                 </div>
               )}
             </div>

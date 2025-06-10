@@ -3,48 +3,161 @@
 
 .TODOItem-container {
   display: flex;
-  flex-direction: column; // 改为垂直布局以支持展开
+  flex-direction: column;
   z-index: 0;
-  min-height: 48px;
-  margin: 12px;
-  background-color: #fafbf8;
-  overflow: hidden; // 隐藏溢出内容
-  transition: all 0.3s ease-in-out; // 添加过渡动画
+  min-height: 68px;
+  margin: 0 0 16px 0;
+  background: var(--surface-primary);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   cursor: pointer;
-  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(102, 126, 234, 0.05) 0%,
+      rgba(0, 212, 170, 0.05) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 10px;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: rgba(102, 126, 234, 0.3);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
   // 主要内容区域
   .main-content {
     display: flex;
-    height: 48px;
     align-items: center;
+    min-height: 68px;
+    padding: 16px;
+    position: relative;
+    z-index: 1;
   }
 
   .TODO-content {
-    font-size: 2em;
-    width: 100%;
-    padding: 0 16px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 16px;
+    min-width: 0;
+
+    .content-text {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.4;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .completed-icon {
+      color: #52c41a;
+      font-size: 18px;
+      animation: bounceIn 0.5s ease-out;
+      flex-shrink: 0;
+    }
+
+    &.completed-text {
+      .content-text {
+        text-decoration: line-through;
+        color: var(--text-tertiary);
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .task-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: auto;
+    margin-right: 16px;
+    text-align: right;
+    min-width: 0;
+
+    .description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.3;
+      opacity: 0.8;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 150px;
+    }
+
+    .date-range {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      background: var(--surface-tertiary);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
   }
 
   .color-block {
     position: relative;
-    height: 100%;
-    width: 20%;
-    z-index: 1;
-    transform-origin: right;
-    transform: scaleX(40%);
-    transition: 0.5s ease-in-out;
+    height: 68px;
+    width: 80px;
+    z-index: 2;
+    border-radius: 0 10px 10px 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 
-    // 默认显示的'<'符号
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0.1) 100%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    // 默认显示的编辑图标
     .default-icon {
-      font-size: 24px;
-      color: var(--text-inverse);
-      font-weight: bold;
-      transition: all 0.3s ease; // 改为all以支持旋转动画
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.9);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       opacity: 1;
-      transform: rotate(0deg); // 默认角度
+      transform: rotate(0deg) scale(1);
+
+      &.expanded {
+        transform: rotate(180deg) scale(1.1);
+        opacity: 0.7;
+      }
     }
 
     // 操作按钮容器
@@ -58,47 +171,71 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 6px;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transform: scale(0.8);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
       button {
-        padding: 4px 8px;
-        font-size: 12px;
+        padding: 6px 10px;
+        font-size: 11px;
         border: none;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
-        transition: all 0.2s ease;
-        color: var(--text-inverse);
-        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        color: rgba(255, 255, 255, 0.95);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+        .anticon {
+          font-size: 12px;
+        }
 
         &.complete-btn {
-          background-color: var(--success-color);
-          &:hover {
-            background-color: var(--success-light);
-            transform: scale(1.05);
+          &.complete {
+            background: rgba(82, 196, 26, 0.9);
+            &:hover {
+              background: rgba(82, 196, 26, 1);
+              transform: scale(1.05) translateY(-1px);
+            }
+          }
+
+          &.undo {
+            background: rgba(250, 173, 20, 0.9);
+            &:hover {
+              background: rgba(250, 173, 20, 1);
+              transform: scale(1.05) translateY(-1px);
+            }
           }
         }
 
         &.delete-btn {
-          background-color: var(--danger-color);
+          background: rgba(239, 68, 68, 0.9);
           &:hover {
-            background-color: var(--danger-light);
-            transform: scale(1.05);
+            background: rgba(239, 68, 68, 1);
+            transform: scale(1.05) translateY(-1px);
           }
         }
       }
     }
 
     &:hover {
-      transform: scaleX(100%);
+      &::before {
+        opacity: 1;
+      }
 
       .default-icon {
-        opacity: 0; // 悬停时隐藏'<'符号
+        opacity: 0;
+        transform: rotate(90deg) scale(0.8);
       }
 
       .action-buttons {
-        opacity: 1; // 悬停时显示按钮
+        opacity: 1;
+        transform: scale(1);
       }
     }
   }
@@ -106,82 +243,168 @@
   // 编辑区域样式
   .edit-block {
     width: 100%;
-    background-color: var(--surface-secondary);
-    transition: all 0.3s ease-in-out;
+    background: linear-gradient(
+      135deg,
+      var(--surface-secondary) 0%,
+      #f8fafc 100%
+    );
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: hidden;
     padding: 0;
     display: flex;
     flex-direction: column;
+    border-top: 1px solid var(--border-light);
 
     &.hide {
       height: 0;
       opacity: 0;
+      padding: 0;
     }
 
     &.show {
-      height: 200px; // 展开后的高度
+      height: 240px;
       opacity: 1;
-      padding: 16px;
+      padding: 20px;
 
-      // 确保表单内容充满整个区域
       .ant-form {
         height: 100%;
 
         .ant-form-item {
-          margin-bottom: 12px; // 减少表单项间距
+          margin-bottom: 16px;
 
           &:last-child {
             margin-bottom: 0;
-            margin-top: auto; // 提交按钮推到底部
+            margin-top: auto;
           }
         }
 
         .ant-form-item-label {
-          font-size: 12px;
+          font-size: 13px;
+          margin-bottom: 4px;
 
           label {
             color: var(--text-secondary);
-            font-weight: 500;
+            font-weight: 600;
           }
         }
 
         .ant-input,
-        .ant-picker {
-          border-radius: 6px;
-          border-color: var(--border-medium);
+        .ant-picker,
+        .ant-input-affix-wrapper {
+          border-radius: 8px;
+          border: 2px solid var(--border-light);
+          transition: all 0.3s ease;
+          font-size: 13px;
 
           &:focus,
           &:hover {
-            border-color: var(--accent-color);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
           }
         }
 
-        .ant-btn-primary {
-          background-color: var(--primary-color);
-          border-color: var(--primary-color);
-          border-radius: 6px;
+        .ant-input::placeholder {
+          color: var(--text-placeholder);
+          font-size: 13px;
+        }
 
-          &:hover {
-            background-color: var(--primary-color-dark);
-            border-color: var(--primary-color-dark);
+        .ant-btn {
+          border-radius: 8px;
+          font-weight: 500;
+          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+          &.ant-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+
+            &:hover:not(:disabled) {
+              transform: translateY(-1px);
+              box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+          }
+
+          &:not(.ant-btn-primary) {
+            background: var(--surface-tertiary);
+            border: 1px solid var(--border-medium);
+            color: var(--text-secondary);
+
+            &:hover {
+              background: var(--surface-primary);
+              border-color: var(--border-strong);
+            }
           }
         }
       }
     }
   }
 
-  &:hover {
-    box-shadow: @box-shadow-md-light-scheme;
+  // 完成状态样式
+  &.completed {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-color: rgba(82, 196, 26, 0.2);
+
+    &::before {
+      background: linear-gradient(
+        135deg,
+        rgba(82, 196, 26, 0.05) 0%,
+        rgba(34, 197, 94, 0.05) 100%
+      );
+    }
+
+    .main-content {
+      opacity: 0.85;
+    }
+
+    &:hover {
+      border-color: rgba(82, 196, 26, 0.4);
+      opacity: 1;
+    }
+  }
+
+  &.active {
+    &:hover {
+      border-color: rgba(102, 126, 234, 0.3);
+    }
   }
 
   // 展开状态样式
   &.expanded {
-    .color-block {
-      border-radius: 0; // 展开时移除右侧圆角
+    border-color: #667eea;
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
 
-      .default-icon {
-        transform: rotate(-90deg); // 向下旋转90度
-      }
+    .color-block {
+      border-radius: 0;
+    }
+  }
+
+  // 动画定义
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
 }

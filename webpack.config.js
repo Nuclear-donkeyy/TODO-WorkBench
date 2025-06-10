@@ -13,12 +13,20 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        use: {
+          loader: 'ts-loader',
+          options: {
+            configFile: 'tsconfig.renderer.json',
+          },
+        },
         exclude: /node_modules/,
       },
       {
@@ -47,4 +55,4 @@ module.exports = {
     }),
   ],
   devtool: 'source-map',
-}; 
+};

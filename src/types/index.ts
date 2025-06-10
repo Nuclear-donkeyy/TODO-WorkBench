@@ -2,6 +2,8 @@
  * 核心数据类型定义
  */
 
+import type { Request, Response } from 'express';
+
 // Todo项的基础接口
 export interface ITodo {
   id: number;
@@ -84,14 +86,14 @@ export interface IAppConfig {
 }
 
 // Express请求扩展接口
-export interface IExtendedRequest extends Express.Request {
+export interface IExtendedRequest extends Request {
   body: any;
   params: { [key: string]: string };
   query: { [key: string]: string | string[] | undefined };
 }
 
 // Express响应扩展接口
-export interface IExtendedResponse extends Express.Response {
+export interface IExtendedResponse extends Response {
   json(body: IApiResponse): this;
 }
 

@@ -1,17 +1,24 @@
 import { useState } from 'react';
 import './index.less';
 import { Button, DatePicker, Form, FormProps, Input, message } from 'antd';
+import {
+  CheckCircleOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  UndoOutlined,
+} from '@ant-design/icons';
 import { API } from '../../api';
 import dayjs from 'dayjs';
 import { UpdateTodoParams } from '@/renderer/api/TODOList/types';
 
 interface TODOItemProps {
-  id?: string; // 添加id属性用于API调用
+  id?: string;
   content: string;
   color: string;
-  description?: string; // 添加描述
-  startDate?: string; // 添加开始日期
-  endDate?: string; // 添加结束日期
+  completed?: boolean; // 添加completed属性
+  description?: string;
+  startDate?: string;
+  endDate?: string;
   onComplete?: () => void;
   onDelete?: () => void;
   refresh?: () => void;
@@ -50,7 +57,6 @@ export default function TODOItem(props: TODOItemProps): JSX.Element {
 
     setUpdating(true);
     try {
-      // 处理日期范围
       let startDate: string | undefined;
       let endDate: string | undefined;
 
@@ -71,8 +77,8 @@ export default function TODOItem(props: TODOItemProps): JSX.Element {
 
       if (response.success) {
         message.success(response.message || '任务更新成功');
-        setIsExpanded(false); // 关闭编辑区域
-        props.refresh?.(); // 刷新列表
+        setIsExpanded(false);
+        props.refresh?.();
       } else {
         message.error(response.error || '更新失败');
       }
@@ -84,28 +90,55 @@ export default function TODOItem(props: TODOItemProps): JSX.Element {
   };
 
   return (
-    <div className={`TODOItem-container ${isExpanded ? 'expanded' : ''}`}>
+    <div
+      className={`TODOItem-container ${isExpanded ? 'expanded' : ''} ${props.completed ? 'completed' : 'active'}`}
+    >
       <div className='main-content' onClick={handleClick}>
-        <div className='TODO-content'>{props.content}</div>
+        <div
+          className={`TODO-content ${props.completed ? 'completed-text' : ''}`}
+        >
+          {props.completed && (
+            <CheckCircleOutlined className='completed-icon' />
+          )}
+          <span className='content-text'>{props.content}</span>
+        </div>
+        <div className='task-meta'>
+          {props.description && (
+            <span className='description'>{props.description}</span>
+          )}
+          {(props.startDate || props.endDate) && (
+            <span className='date-range'>
+              {props.startDate && dayjs(props.startDate).format('MM/DD')}
+              {props.startDate && props.endDate && ' - '}
+              {props.endDate && dayjs(props.endDate).format('MM/DD')}
+            </span>
+          )}
+        </div>
         <div className='color-block' style={{ backgroundColor: props.color }}>
-          <div className='default-icon'>&lt;</div>
+          <div className={`default-icon ${isExpanded ? 'expanded' : ''}`}>
+            <EditOutlined />
+          </div>
           <div className='action-buttons'>
             <button
-              className='complete-btn'
+              className={`complete-btn ${props.completed ? 'undo' : 'complete'}`}
               onClick={e => {
-                e.stopPropagation(); // 阻止事件冒泡
+                e.stopPropagation();
                 props.onComplete?.();
               }}
+              title={props.completed ? '重新激活' : '标记完成'}
             >
-              完成
+              {props.completed ? <UndoOutlined /> : <CheckCircleOutlined />}
+              {props.completed ? '激活' : '完成'}
             </button>
             <button
               className='delete-btn'
               onClick={e => {
-                e.stopPropagation(); // 阻止事件冒泡
+                e.stopPropagation();
                 props.onDelete?.();
               }}
+              title='删除任务'
             >
+              <DeleteOutlined />
               删除
             </button>
           </div>
@@ -114,7 +147,7 @@ export default function TODOItem(props: TODOItemProps): JSX.Element {
       <div className={`edit-block ${isExpanded ? 'show' : 'hide'}`}>
         <Form
           name='basic'
-          wrapperCol={{ span: 18 }}
+          layout='vertical'
           style={{
             width: '100%',
             height: '100%',
@@ -130,13 +163,21 @@ export default function TODOItem(props: TODOItemProps): JSX.Element {
           onFinish={onFinish}
         >
           <Form.Item<FieldType> label='任务名称' name='taskname'>
-            <Input />
+            <Input placeholder='请输入任务名称' />
           </Form.Item>
           <Form.Item<FieldType> label='任务描述' name='taskDesc'>
-            <Input.TextArea />
+            <Input.TextArea
+              placeholder='请输入任务描述'
+              rows={2}
+              showCount
+              maxLength={200}
+            />
           </Form.Item>
-          <Form.Item<FieldType> label='结束日期' name='taskPeriod'>
-            <RangePicker style={{ width: '100%' }} />
+          <Form.Item<FieldType> label='任务期限' name='taskPeriod'>
+            <RangePicker
+              style={{ width: '100%' }}
+              placeholder={['开始日期', '结束日期']}
+            />
           </Form.Item>
 
           <Form.Item
@@ -152,7 +193,7 @@ export default function TODOItem(props: TODOItemProps): JSX.Element {
               size='small'
               loading={updating}
               disabled={updating}
-              style={{ margin: '8px' }}
+              style={{ marginRight: '8px' }}
             >
               {updating ? '保存中...' : '保存修改'}
             </Button>

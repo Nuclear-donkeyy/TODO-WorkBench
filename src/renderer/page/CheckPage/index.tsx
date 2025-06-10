@@ -90,7 +90,7 @@ export default function CheckPage(): JSX.Element {
             isCheckedIn: true,
             checkedInAt: new Date().toLocaleString(),
             streak: task.streak + 1,
-            progress: Math.min(100, task.progress + 10),
+            progress: Math.min(100, (task.progress ?? 0) + 10),
           };
         }
         return task;

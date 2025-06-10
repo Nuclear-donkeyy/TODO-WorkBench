@@ -1,5 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Spin, message, Form, Input, DatePicker } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  Button,
+  Spin,
+  message,
+  Form,
+  Input,
+  DatePicker,
+  Tabs,
+  Badge,
+} from 'antd';
+import {
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import TODOItem from '../../components/TODOItem';
 import { API } from '../../api';
 
@@ -8,6 +22,7 @@ import './index.less';
 import { CreateTodoParams, TodoItem } from '@/renderer/api/TODOList/types';
 
 const { RangePicker } = DatePicker;
+const { TabPane } = Tabs;
 
 type CreateFormFields = {
   taskname: string;
@@ -20,15 +35,32 @@ export default function TODOPage(): JSX.Element {
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [activeTab, setActiveTab] = useState('active');
   const [createForm] = Form.useForm();
+
+  // 根据完成状态分组TODO项
+  const { activeTodos, completedTodos } = useMemo(() => {
+    const active = todos.filter(todo => !todo.completed);
+    const completed = todos.filter(todo => todo.completed);
+    return { activeTodos: active, completedTodos: completed };
+  }, [todos]);
 
   // 获取TODO列表
   const fetchTodos = async (): Promise<void> => {
     setLoading(true);
     try {
-      const response = await API.todo.getTodoList({ page: 1, limit: 20 });
+      const response = await API.todo.getTodoList({ page: 1, limit: 50 });
       if (response.success && response.data) {
-        setTodos(response.data.items);
+        // 按创建时间倒序排列，未完成的排在前面
+        const sortedTodos = response.data.items.sort((a, b) => {
+          if (a.completed !== b.completed) {
+            return a.completed ? 1 : -1;
+          }
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        });
+        setTodos(sortedTodos);
       } else {
         message.error(response.error || '获取TODO列表失败');
       }
@@ -43,7 +75,7 @@ export default function TODOPage(): JSX.Element {
   const toggleCreateForm = (): void => {
     setShowCreateForm(!showCreateForm);
     if (!showCreateForm) {
-      createForm.resetFields(); // 展开时重置表单
+      createForm.resetFields();
     }
   };
 
@@ -53,10 +85,18 @@ export default function TODOPage(): JSX.Element {
   ): Promise<void> => {
     setCreating(true);
     try {
-      const colors = ['#667eea', '#00d4aa', '#ef4444', '#f59e0b', '#3b82f6'];
+      const colors = [
+        '#667eea',
+        '#00d4aa',
+        '#ef4444',
+        '#f59e0b',
+        '#3b82f6',
+        '#8b5cf6',
+        '#06b6d4',
+        '#10b981',
+      ];
       const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
-      // 处理日期范围
       let startDate: string | undefined;
       let endDate: string | undefined;
 
@@ -77,9 +117,9 @@ export default function TODOPage(): JSX.Element {
 
       if (response.success) {
         message.success(response.message || '创建成功');
-        setShowCreateForm(false); // 关闭表单
-        createForm.resetFields(); // 重置表单
-        fetchTodos(); // 刷新列表
+        setShowCreateForm(false);
+        createForm.resetFields();
+        fetchTodos();
       } else {
         message.error(response.error || '创建失败');
       }
@@ -110,9 +150,12 @@ export default function TODOPage(): JSX.Element {
     try {
       const response = await API.todo.toggleTodoComplete(id);
       if (response.success && response.data) {
-        message.success(response.message);
+        const updatedTodo = response.data;
+        message.success(
+          updatedTodo.completed ? '任务已完成！' : '任务重新激活'
+        );
         setTodos(prev =>
-          prev.map(todo => (todo.id === id ? response.data! : todo))
+          prev.map(todo => (todo.id === id ? updatedTodo : todo))
         );
       } else {
         message.error(response.error || '操作失败');
@@ -120,6 +163,54 @@ export default function TODOPage(): JSX.Element {
     } catch (error) {
       message.error('操作失败，请稍后重试');
     }
+  };
+
+  // 渲染TODO列表
+  const renderTodoList = (todoList: TodoItem[]) => {
+    if (todoList.length === 0) {
+      return (
+        <div className='empty-state'>
+          <div className='empty-icon'>
+            {activeTab === 'active' ? (
+              <ClockCircleOutlined style={{ fontSize: 48, color: '#d1d5db' }} />
+            ) : (
+              <CheckCircleOutlined style={{ fontSize: 48, color: '#d1d5db' }} />
+            )}
+          </div>
+          <p className='empty-text'>
+            {activeTab === 'active' ? '暂无进行中的任务' : '暂无已完成的任务'}
+          </p>
+          {activeTab === 'active' && (
+            <Button
+              type='primary'
+              icon={<PlusOutlined />}
+              onClick={toggleCreateForm}
+              className='empty-action-btn'
+            >
+              创建第一个任务
+            </Button>
+          )}
+        </div>
+      );
+    }
+
+    return todoList.map(todo => (
+      <TODOItem
+        key={todo.id}
+        id={todo.id}
+        content={todo.content}
+        color={todo.color}
+        completed={todo.completed}
+        {...(todo.description !== undefined && {
+          description: todo.description,
+        })}
+        {...(todo.startDate !== undefined && { startDate: todo.startDate })}
+        {...(todo.endDate !== undefined && { endDate: todo.endDate })}
+        onComplete={() => handleToggleComplete(todo.id)}
+        onDelete={() => handleDeleteTodo(todo.id)}
+        refresh={fetchTodos}
+      />
+    ));
   };
 
   // 组件挂载时获取数据
@@ -130,12 +221,33 @@ export default function TODOPage(): JSX.Element {
   return (
     <div className='todo-page-container'>
       <div className='todo-header'>
-        <h2>我的任务</h2>
+        <div className='header-title'>
+          <h2>我的任务</h2>
+          <div className='task-stats'>
+            <span className='stat-item active'>
+              <ClockCircleOutlined />
+              {activeTodos.length} 进行中
+            </span>
+            <span className='stat-item completed'>
+              <CheckCircleOutlined />
+              {completedTodos.length} 已完成
+            </span>
+          </div>
+        </div>
         <div className='todo-actions'>
-          <Button type='primary' onClick={toggleCreateForm}>
+          <Button
+            type='primary'
+            icon={<PlusOutlined />}
+            onClick={toggleCreateForm}
+            className='create-btn'
+          >
             {showCreateForm ? '取消添加' : '添加任务'}
           </Button>
-          <Button onClick={fetchTodos} disabled={loading}>
+          <Button
+            onClick={fetchTodos}
+            disabled={loading}
+            className='refresh-btn'
+          >
             刷新
           </Button>
         </div>
@@ -144,40 +256,57 @@ export default function TODOPage(): JSX.Element {
       {/* 创建任务表单 */}
       {showCreateForm && (
         <div className='create-form-container'>
+          <div className='form-header'>
+            <h3>创建新任务</h3>
+          </div>
           <Form
             form={createForm}
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 20 }}
+            layout='vertical'
             onFinish={handleCreateSubmit}
-            style={{ width: '100%' }}
+            className='create-form'
           >
             <Form.Item
               label='任务名称'
               name='taskname'
               rules={[{ required: true, message: '请输入任务名称' }]}
             >
-              <Input placeholder='请输入任务名称' />
+              <Input placeholder='请输入任务名称' size='large' />
             </Form.Item>
 
             <Form.Item label='任务描述' name='taskDesc'>
-              <Input.TextArea placeholder='请输入任务描述（可选）' rows={3} />
+              <Input.TextArea
+                placeholder='请输入任务描述（可选）'
+                rows={3}
+                showCount
+                maxLength={200}
+              />
             </Form.Item>
 
             <Form.Item label='任务期限' name='taskPeriod'>
-              <RangePicker style={{ width: '100%' }} />
+              <RangePicker
+                style={{ width: '100%' }}
+                size='large'
+                placeholder={['开始日期', '结束日期']}
+              />
             </Form.Item>
 
-            <Form.Item wrapperCol={{ offset: 4, span: 20 }}>
+            <Form.Item>
               <div className='form-actions'>
                 <Button
                   type='primary'
                   htmlType='submit'
                   loading={creating}
                   disabled={creating}
+                  size='large'
+                  icon={<PlusOutlined />}
                 >
                   {creating ? '创建中...' : '创建任务'}
                 </Button>
-                <Button onClick={toggleCreateForm} disabled={creating}>
+                <Button
+                  onClick={toggleCreateForm}
+                  disabled={creating}
+                  size='large'
+                >
                   取消
                 </Button>
               </div>
@@ -186,34 +315,59 @@ export default function TODOPage(): JSX.Element {
         </div>
       )}
 
-      <Spin spinning={loading}>
-        <div className='todo-list'>
-          {todos.length === 0 ? (
-            <div className='empty-state'>
-              <p>暂无任务，点击添加任务创建第一个任务吧！</p>
-            </div>
-          ) : (
-            todos.map(todo => (
-              <TODOItem
-                key={todo.id}
-                id={todo.id}
-                content={todo.content}
-                color={todo.color}
-                {...(todo.description !== undefined && {
-                  description: todo.description,
-                })}
-                {...(todo.startDate !== undefined && {
-                  startDate: todo.startDate,
-                })}
-                {...(todo.endDate !== undefined && { endDate: todo.endDate })}
-                onComplete={() => handleToggleComplete(todo.id)}
-                onDelete={() => handleDeleteTodo(todo.id)}
-                refresh={fetchTodos}
-              />
-            ))
-          )}
-        </div>
-      </Spin>
+      {/* 任务列表区域 */}
+      <div className='todo-content'>
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          className='todo-tabs'
+          size='large'
+        >
+          <TabPane
+            tab={
+              <Badge
+                count={activeTodos.length}
+                showZero
+                style={{ backgroundColor: '#1890ff' }}
+              >
+                <span className='tab-label'>
+                  <ClockCircleOutlined />
+                  进行中
+                </span>
+              </Badge>
+            }
+            key='active'
+          >
+            <Spin spinning={loading}>
+              <div className='todo-list active-todos'>
+                {renderTodoList(activeTodos)}
+              </div>
+            </Spin>
+          </TabPane>
+
+          <TabPane
+            tab={
+              <Badge
+                count={completedTodos.length}
+                showZero
+                style={{ backgroundColor: '#52c41a' }}
+              >
+                <span className='tab-label'>
+                  <CheckCircleOutlined />
+                  已完成
+                </span>
+              </Badge>
+            }
+            key='completed'
+          >
+            <Spin spinning={loading}>
+              <div className='todo-list completed-todos'>
+                {renderTodoList(completedTodos)}
+              </div>
+            </Spin>
+          </TabPane>
+        </Tabs>
+      </div>
     </div>
   );
 }

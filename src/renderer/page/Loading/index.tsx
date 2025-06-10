@@ -1,7 +1,10 @@
+import './index.less';
 export default function Loading(): JSX.Element {
   return (
-    <div>
-      <h1>加载中</h1>
+    <div className='loading-container'>
+      <div className='loading-bar'></div>
+      <div className='loading-bar'></div>
+      <div className='loading-bar'></div>
     </div>
   );
 }
