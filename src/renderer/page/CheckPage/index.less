@@ -72,21 +72,78 @@
       }
     }
 
-    .add-task-btn {
-      background: linear-gradient(
-        135deg,
-        var(--primary-color),
-        var(--primary-color-dark)
-      );
-      border: none;
-      border-radius: @border-radius-lg;
-      font-weight: 600;
-      box-shadow: @box-shadow-sm-light-scheme;
-      transition: all @transition-normal;
+    .header-actions {
+      display: flex;
+      gap: @spacing-md;
+      align-items: center;
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: @box-shadow-md-light-scheme;
+      .manage-btn {
+        border-radius: @border-radius-lg;
+        font-weight: 600;
+        border: 2px solid var(--primary-color);
+        color: var(--primary-color);
+        background: transparent;
+        transition: all @transition-normal;
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+          );
+          transition: left 0.5s;
+        }
+
+        &:hover {
+          background: var(--primary-color);
+          color: white;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+
+          &::before {
+            left: 100%;
+          }
+        }
+
+        &.ant-btn-default {
+          background: var(--primary-color);
+          color: white;
+          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+
+          &:hover {
+            background: var(--primary-color-dark);
+            border-color: var(--primary-color-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+          }
+        }
+      }
+
+      .add-task-btn {
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-color-dark)
+        );
+        border: none;
+        border-radius: @border-radius-lg;
+        font-weight: 600;
+        box-shadow: @box-shadow-sm-light-scheme;
+        transition: all @transition-normal;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: @box-shadow-md-light-scheme;
+        }
       }
     }
   }
@@ -147,6 +204,27 @@
       &::before {
         opacity: 1;
       }
+
+      .task-operations {
+        .operation-buttons {
+          opacity: 1;
+        }
+      }
+    }
+
+    &.manage-mode {
+      border-color: var(--primary-color);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+
+      .task-operations {
+        .operation-buttons {
+          opacity: 1 !important;
+        }
+      }
+
+      .task-title {
+        color: var(--primary-color-dark);
+      }
     }
 
     &.checked-in {
@@ -178,15 +256,10 @@
       align-items: center;
       margin-bottom: @spacing-lg;
 
-      .task-category {
+      .task-info {
         display: flex;
         align-items: center;
         gap: @spacing-sm;
-
-        .category-icon {
-          font-size: 20px;
-          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-        }
 
         .ant-badge {
           .ant-badge-count {
@@ -200,19 +273,72 @@
         }
       }
 
-      .check-status {
-        .check-icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 28px;
-          height: 28px;
-          background: var(--accent-color);
-          color: white;
-          border-radius: 50%;
-          font-size: 16px;
-          font-weight: bold;
-          box-shadow: 0 2px 8px rgba(0, 212, 170, 0.3);
+      .task-operations {
+        display: flex;
+        align-items: center;
+        gap: @spacing-xs;
+
+        .check-status {
+          .check-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0, 212, 170, 0.3);
+          }
+        }
+
+        .operation-buttons {
+          display: flex;
+          gap: @spacing-xs;
+          opacity: 0;
+          transition: opacity @transition-normal;
+          z-index: 10;
+          position: relative;
+
+          .edit-btn {
+            color: var(--text-secondary);
+            padding: @spacing-xs @spacing-sm;
+            border-radius: @border-radius-md;
+            border: 1px solid transparent;
+            transition: all @transition-normal;
+
+            &:hover {
+              color: var(--primary-color);
+              background: var(--primary-color-soft);
+              border-color: var(--primary-color);
+              transform: translateY(-1px);
+            }
+
+            &:active {
+              transform: translateY(0);
+            }
+          }
+
+          .delete-btn {
+            color: var(--text-secondary);
+            padding: @spacing-xs @spacing-sm;
+            border-radius: @border-radius-md;
+            border: 1px solid transparent;
+            transition: all @transition-normal;
+
+            &:hover {
+              color: var(--danger-color);
+              background: var(--danger-soft);
+              border-color: var(--danger-color);
+              transform: translateY(-1px);
+            }
+
+            &:active {
+              transform: translateY(0);
+            }
+          }
         }
       }
     }
@@ -284,11 +410,38 @@
         font-size: @font-size-base;
         font-weight: 600;
         transition: all @transition-normal;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-color-dark)
+        );
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+          );
+          transition: left 0.5s;
+        }
 
         &:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+
+          &::before {
+            left: 100%;
+          }
         }
 
         &:active {
@@ -296,19 +449,53 @@
         }
       }
 
-      .checked-btn {
-        width: 100%;
-        height: 44px;
-        background: var(--surface-secondary);
-        color: var(--text-disabled);
-        border: 1px dashed var(--border-medium);
-        border-radius: @border-radius-lg;
-        font-size: @font-size-base;
-        font-weight: 500;
-        cursor: not-allowed;
+      .checked-actions {
+        display: flex;
+        flex-direction: column;
+        gap: @spacing-sm;
 
-        .anticon {
-          color: var(--accent-color);
+        .checked-btn {
+          width: 100%;
+          height: 44px;
+          background: linear-gradient(
+            135deg,
+            var(--accent-color-soft),
+            var(--surface-secondary)
+          );
+          color: var(--accent-color-dark);
+          border: 2px solid var(--accent-color);
+          border-radius: @border-radius-lg;
+          font-size: @font-size-base;
+          font-weight: 600;
+          cursor: not-allowed;
+          position: relative;
+
+          .anticon {
+            color: var(--accent-color);
+            font-weight: bold;
+          }
+        }
+
+        .reset-btn {
+          color: var(--text-secondary);
+          font-size: @font-size-small;
+          height: 32px;
+          align-self: center;
+          border: 1px solid var(--border-medium);
+          border-radius: @border-radius-md;
+          transition: all @transition-normal;
+
+          &:hover {
+            color: var(--primary-color);
+            background: var(--primary-color-soft);
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
         }
       }
     }
@@ -346,44 +533,26 @@
     }
   }
 
-  .task-card {
-    animation: slideInUp 0.6s ease-out;
-
-    // 手动设置每个卡片的动画延迟
-    &:nth-child(1) {
-      animation-delay: 0.1s;
+  // 已打卡闪光动画
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%);
     }
-    &:nth-child(2) {
-      animation-delay: 0.2s;
+    50% {
+      transform: translateX(0%);
     }
-    &:nth-child(3) {
-      animation-delay: 0.3s;
-    }
-    &:nth-child(4) {
-      animation-delay: 0.4s;
-    }
-    &:nth-child(5) {
-      animation-delay: 0.5s;
-    }
-    &:nth-child(6) {
-      animation-delay: 0.6s;
-    }
-    &:nth-child(7) {
-      animation-delay: 0.7s;
-    }
-    &:nth-child(8) {
-      animation-delay: 0.8s;
-    }
-    &:nth-child(9) {
-      animation-delay: 0.9s;
-    }
-    &:nth-child(10) {
-      animation-delay: 1s;
+    100% {
+      transform: translateX(100%);
     }
   }
 
-  // 空状态（如果需要）
+  .task-card {
+    animation: slideInUp 0.6s ease-out;
+  }
+
+  // 空状态
   .empty-state {
+    grid-column: 1 / -1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -391,7 +560,6 @@
     background: var(--surface-secondary);
     border: 2px dashed var(--border-light);
     border-radius: @border-radius-xl;
-    margin-top: @spacing-3xl;
 
     .empty-content {
       text-align: center;
@@ -428,6 +596,165 @@
       }
     }
   }
+
+  // 弹窗样式
+  .task-modal {
+    .ant-modal-header {
+      border-bottom: 1px solid var(--border-light);
+
+      .ant-modal-title {
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+    }
+
+    .ant-modal-body {
+      padding: @spacing-2xl;
+
+      .ant-form-item {
+        margin-bottom: @spacing-lg;
+
+        .ant-form-item-label {
+          padding-bottom: @spacing-xs;
+
+          label {
+            color: var(--text-primary);
+            font-weight: 500;
+          }
+        }
+
+        .ant-input,
+        .ant-input-affix-wrapper,
+        .ant-select-selector {
+          border: 1px solid var(--border-medium);
+          border-radius: @border-radius-md;
+          transition: all @transition-normal;
+
+          &:hover {
+            border-color: var(--primary-color);
+          }
+
+          &:focus,
+          &.ant-input-affix-wrapper-focused,
+          &.ant-select-focused .ant-select-selector {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px var(--primary-color-soft);
+          }
+        }
+
+        .ant-input::placeholder {
+          color: var(--text-placeholder);
+        }
+      }
+    }
+
+    .ant-modal-footer {
+      border-top: 1px solid var(--border-light);
+      padding: @spacing-lg @spacing-2xl;
+
+      .ant-btn {
+        border-radius: @border-radius-md;
+        font-weight: 500;
+        height: 36px;
+        padding: 0 @spacing-lg;
+
+        &.ant-btn-primary {
+          background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--primary-color-dark)
+          );
+          border: none;
+          position: relative;
+          overflow: hidden;
+
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+              90deg,
+              transparent,
+              rgba(255, 255, 255, 0.2),
+              transparent
+            );
+            transition: left 0.5s;
+          }
+
+          &:hover {
+            background: linear-gradient(
+              135deg,
+              var(--primary-color-dark),
+              var(--primary-color)
+            );
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+
+            &::before {
+              left: 100%;
+            }
+          }
+        }
+
+        &.ant-btn-default {
+          border-color: var(--border-medium);
+          color: var(--text-secondary);
+
+          &:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+          }
+        }
+      }
+    }
+  }
+
+  // Popconfirm 样式
+  .ant-popover {
+    .ant-popover-inner {
+      border-radius: @border-radius-lg;
+      box-shadow: @box-shadow-md-light-scheme;
+
+      .ant-popover-inner-content {
+        .ant-popconfirm-message {
+          margin-bottom: @spacing-md;
+
+          .ant-popconfirm-title {
+            color: var(--text-primary);
+            font-weight: 500;
+          }
+
+          .ant-popconfirm-description {
+            color: var(--text-secondary);
+            margin-top: @spacing-xs;
+          }
+        }
+
+        .ant-popconfirm-buttons {
+          .ant-btn {
+            border-radius: @border-radius-sm;
+            height: 28px;
+            font-size: @font-size-small;
+
+            &.ant-btn-primary {
+              &.ant-btn-dangerous {
+                background: var(--danger-color);
+                border-color: var(--danger-color);
+
+                &:hover {
+                  background: var(--danger-light);
+                  border-color: var(--danger-light);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 // 响应式优化
@@ -450,8 +777,15 @@
         }
       }
 
-      .add-task-btn {
+      .header-actions {
+        flex-direction: column;
+        gap: @spacing-sm;
         align-self: stretch;
+
+        .manage-btn,
+        .add-task-btn {
+          align-self: stretch;
+        }
       }
     }
 
