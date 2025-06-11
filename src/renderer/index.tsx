@@ -1,3 +1,6 @@
+// 定义 Node.js 全局变量以兼容浏览器环境
+(globalThis as any).global = globalThis;
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
 import { IElectronConfig } from './types';
 
@@ -15,9 +15,9 @@ const electronConfig: IElectronConfig = {
   maximizable: true,
   resizable: true,
   webPreferences: {
-    nodeIntegration: true,
-    contextIsolation: false,
-    enableRemoteModule: true,
+    nodeIntegration: false,
+    contextIsolation: true,
+    enableRemoteModule: false,
   },
   show: false,
   titleBarStyle: 'default',
@@ -28,6 +28,7 @@ function createWindow(): void {
     ...electronConfig,
     icon: path.join(__dirname, 'assets/icon.png'),
     webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
       ...electronConfig.webPreferences,
       enablePreferredSizeMode: true, // 根据内容确定窗口大小
     },
@@ -56,6 +57,8 @@ function createWindow(): void {
   mainWindow.on('closed', (): void => {
     mainWindow = null;
   });
+
+  ipcMain.on('test', (_event, msg) => console.log(msg));
 }
 
 app.whenReady().then((): void => {

@@ -1,11 +1,12 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'development',
   entry: './src/renderer/index.tsx', // React入口文件
-  target: 'electron-renderer',
+  target: 'web',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'renderer.js',
@@ -15,6 +16,13 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
+    },
+    fallback: {
+      process: require.resolve('process/browser.js'),
+      Buffer: require.resolve('buffer'),
+      util: require.resolve('util/'),
+      stream: require.resolve('stream-browserify'),
+      events: require.resolve('events/'),
     },
   },
   module: {
@@ -40,6 +48,10 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser.js',
+      Buffer: ['buffer', 'Buffer'],
+    }),
     new HtmlWebpackPlugin({
       template: './index.html',
       filename: 'index.html',

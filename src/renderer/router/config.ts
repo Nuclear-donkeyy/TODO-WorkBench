@@ -46,7 +46,7 @@ export const routers: Array<IRouter> = [
       {
         name: '测试页面',
         path: 'test',
-        component: React.lazy(() => import('../page/Loading')),
+        component: React.lazy(() => import('../components/TestAPI')),
       },
     ],
   },
