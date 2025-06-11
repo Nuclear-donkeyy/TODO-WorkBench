@@ -42,17 +42,18 @@ function createWindow(): void {
   if (isDev) {
     // 开发模式下加载开发服务器
     mainWindow.loadURL('http://localhost:3000');
-    console.log('开发模式：加载 http://localhost:3000');
+    console.log('[main] 开发模式：加载 http://localhost:3000');
   } else {
     // 生产模式下加载本地文件
     mainWindow.loadFile(path.join(__dirname, './index.html'));
-    console.log('生产模式：加载文件 ' + path.join(__dirname, './index.html'));
+    console.log(
+      '[main] 生产模式：加载文件 ' + path.join(__dirname, './index.html')
+    );
   }
 
   mainWindow.once('ready-to-show', (): void => {
     if (mainWindow) {
       mainWindow.show();
-      // 确保窗口焦点
       mainWindow.focus();
     }
   });
@@ -60,7 +61,6 @@ function createWindow(): void {
   // 监听窗口大小变化，确保内容适应
   mainWindow.on('resize', () => {
     if (mainWindow) {
-      // 发送窗口大小变化事件到渲染进程
       mainWindow.webContents.send('window-resize', mainWindow.getSize());
     }
   });
@@ -88,7 +88,7 @@ function createWindow(): void {
 }
 
 app.whenReady().then((): void => {
-  console.log('electron 应用启动');
+  console.log('[main] electron 应用启动');
   // 启动后端子进程
   backendProcess = spawn('node', ['dist/backend/server.js'], {
     stdio: 'pipe',
@@ -110,11 +110,11 @@ app.on('window-all-closed', (): void => {
 });
 
 process.on('uncaughtException', (error: Error): void => {
-  console.error('Uncaught Exception:', error);
+  console.error('[main] Uncaught Exception:', error);
 });
 
 process.on('unhandledRejection', (reason: any, promise: Promise<any>): void => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  console.error('[main]Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 app.on('before-quit', (): void => {
@@ -127,7 +127,7 @@ app.on('before-quit', (): void => {
     // 如果 3 秒后进程仍未退出，强制终止
     setTimeout(() => {
       if (backendProcess && !backendProcess.killed) {
-        console.log('强制终止后端进程...');
+        console.log('[main]强制终止后端进程...');
         backendProcess.kill('SIGKILL');
       }
     }, 3000);
