@@ -185,6 +185,12 @@ export interface ITodoEvent {
 export interface IElectronConfig {
   width: number;
   height: number;
+  minWidth: number;
+  minHeight: number;
+  autoHideMenuBar: boolean;
+  fullscreenable: boolean;
+  maximizable: boolean;
+  resizable: boolean;
   webPreferences: {
     nodeIntegration: boolean;
     contextIsolation: boolean;
