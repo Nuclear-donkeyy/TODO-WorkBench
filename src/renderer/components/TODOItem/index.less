@@ -9,7 +9,7 @@
   margin: 0 0 16px 0;
   background: var(--surface-primary);
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.4s;
   cursor: pointer;
   border-radius: 12px;
   border: 2px solid transparent;
@@ -243,12 +243,8 @@
   // 编辑区域样式
   .edit-block {
     width: 100%;
-    background: linear-gradient(
-      135deg,
-      var(--surface-secondary) 0%,
-      #f8fafc 100%
-    );
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: var(--surface-secondary);
+    transition: all 0.4s;
     overflow: hidden;
     padding: 0;
     display: flex;
@@ -258,7 +254,6 @@
     &.hide {
       height: 0;
       opacity: 0;
-      padding: 0;
     }
 
     &.show {
@@ -308,12 +303,12 @@
         }
 
         .ant-btn {
-          border-radius: 8px;
+          border-radius: 4px;
           font-weight: 500;
-          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          transition: all 0.3s;
 
           &.ant-btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-color);
             border: none;
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 
@@ -363,18 +358,14 @@
 
   &.active {
     &:hover {
-      border-color: rgba(102, 126, 234, 0.3);
+      border-color: #667eea;
     }
   }
 
   // 展开状态样式
   &.expanded {
-    border-color: #667eea;
+    border-color: rgba(102, 126, 234, 0.3);
     box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
-
-    .color-block {
-      border-radius: 0;
-    }
   }
 
   // 动画定义
@@ -393,17 +384,6 @@
     100% {
       opacity: 1;
       transform: scale(1);
-    }
-  }
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateX(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
     }
   }
 }

@@ -167,7 +167,9 @@ export default function TODOPage(): JSX.Element {
   };
 
   // 渲染TODO列表
-  const renderTodoList = (todoList: TodoItem[]) => {
+  const renderTodoList = (
+    todoList: TodoItem[]
+  ): JSX.Element[] | JSX.Element => {
     if (todoList.length === 0) {
       return (
         <div className='empty-state'>
@@ -222,38 +224,36 @@ export default function TODOPage(): JSX.Element {
   return (
     <div className='todo-page-container'>
       {/* 页面头部 */}
-      <Card variant='elevated' className='todo-header-card' padding='lg'>
-        <div className='todo-header-content'>
-          <div className='header-title'>
-            <h2>我的任务</h2>
-            <div className='task-stats'>
-              <span className='stat-item active'>
-                <ClockCircleOutlined />
-                {activeTodos.length} 进行中
-              </span>
-              <span className='stat-item completed'>
-                <CheckCircleOutlined />
-                {completedTodos.length} 已完成
-              </span>
-            </div>
+      <Card variant='elevated' className='todo-header-content' padding='lg'>
+        <div className='header-title'>
+          <h2>我的任务</h2>
+          <div className='task-stats'>
+            <span className='stat-item active'>
+              <ClockCircleOutlined />
+              {activeTodos.length} 进行中
+            </span>
+            <span className='stat-item completed'>
+              <CheckCircleOutlined />
+              {completedTodos.length} 已完成
+            </span>
           </div>
-          <div className='todo-actions'>
-            <Button
-              type='primary'
-              icon={<PlusOutlined />}
-              onClick={toggleCreateForm}
-              className='create-btn'
-            >
-              {showCreateForm ? '取消添加' : '添加任务'}
-            </Button>
-            <Button
-              onClick={fetchTodos}
-              disabled={loading}
-              className='refresh-btn'
-            >
-              刷新
-            </Button>
-          </div>
+        </div>
+        <div className='todo-actions'>
+          <Button
+            type='primary'
+            icon={<PlusOutlined />}
+            onClick={toggleCreateForm}
+            className='create-btn'
+          >
+            {showCreateForm ? '取消添加' : '添加任务'}
+          </Button>
+          <Button
+            onClick={fetchTodos}
+            disabled={loading}
+            className='refresh-btn'
+          >
+            刷新
+          </Button>
         </div>
       </Card>
 

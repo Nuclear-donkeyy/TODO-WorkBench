@@ -1,11 +1,4 @@
 import React, { forwardRef } from 'react';
-import { ColorTokens } from '../../tokens/colors';
-import {
-  SemanticSpacing,
-  BorderRadiusTokens,
-  ShadowTokens,
-} from '../../tokens/spacing';
-import { TypographyTokens } from '../../tokens/typography';
 import './Button.less';
 
 // Button变体类型
