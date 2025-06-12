@@ -28,9 +28,9 @@ function createWindow(): void {
     ...electronConfig,
     icon: path.join(__dirname, 'assets/icon.png'),
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
       ...electronConfig.webPreferences,
-      enablePreferredSizeMode: true, // 根据内容确定窗口大小
+      preload: path.join(__dirname, 'preload.js'),
+      enablePreferredSizeMode: true,
     },
   });
 
@@ -39,12 +39,8 @@ function createWindow(): void {
 
   if (isDev) {
     mainWindow.loadURL('http://localhost:3000');
-    console.log('[main] 开发模式：加载 http://localhost:3000');
   } else {
     mainWindow.loadFile(path.join(__dirname, './index.html'));
-    console.log(
-      '[main] 生产模式：加载文件 ' + path.join(__dirname, './index.html')
-    );
   }
 
   mainWindow.once('ready-to-show', (): void => {
