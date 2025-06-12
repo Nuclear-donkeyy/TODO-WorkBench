@@ -7,8 +7,6 @@ import {
   FireOutlined,
 } from '@ant-design/icons';
 import StatCard from '../../components/StatCard';
-import ProgressRing from '../../components/ProgressRing';
-import CompletionChart from '../../components/CompletionChart';
 import DashboardGrid, {
   DashboardGridItem,
 } from '../../components/DashboardGrid';
@@ -58,20 +56,6 @@ export default function DashboardPage(): JSX.Element {
       visible: true,
       category: '成就统计',
       description: '显示已完成的任务总数',
-    },
-    {
-      id: 'completion-progress',
-      name: '任务完成进度',
-      visible: true,
-      category: '图表展示',
-      description: '环形图显示整体完成进度',
-    },
-    {
-      id: 'completion-chart',
-      name: '任务完成比',
-      visible: true,
-      category: '图表展示',
-      description: '饼图显示完成与未完成比例',
     },
   ]);
 
@@ -130,8 +114,8 @@ export default function DashboardPage(): JSX.Element {
 
     visibleWidgets.forEach((widget, index) => {
       let component: React.ReactNode;
-      let w = 3,
-        h = 2; // 默认大小
+      const w = 3;
+      const h = 2;
 
       switch (widget.id) {
         case 'total-plans':
@@ -189,32 +173,6 @@ export default function DashboardPage(): JSX.Element {
               trend={{ value: 8, isUp: true }}
             />
           );
-          break;
-
-        case 'completion-progress':
-          component = (
-            <ProgressRing
-              title='任务完成进度'
-              percentage={stats.completionRate}
-              total={stats.totalPlans}
-              completed={stats.completedTasks}
-              color='var(--color-accent)'
-              size='md'
-            />
-          );
-          h = 3; // 进度环需要更多高度
-          break;
-
-        case 'completion-chart':
-          component = (
-            <CompletionChart
-              title='任务完成比'
-              completedTasks={stats.completedTasks}
-              totalTasks={stats.totalPlans}
-            />
-          );
-          w = 4;
-          h = 4; // 图表需要更多空间
           break;
 
         default:

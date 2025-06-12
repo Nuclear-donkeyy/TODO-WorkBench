@@ -12,7 +12,6 @@ export interface StatCardProps {
     value: number;
     isUp: boolean;
   };
-  compact?: boolean;
 }
 
 export default function StatCard(props: StatCardProps): JSX.Element {
@@ -23,7 +22,6 @@ export default function StatCard(props: StatCardProps): JSX.Element {
     color = 'var(--color-primary)',
     suffix,
     trend,
-    compact = false,
   } = props;
 
   return (
@@ -31,7 +29,7 @@ export default function StatCard(props: StatCardProps): JSX.Element {
       variant='elevated'
       padding='none'
       hoverable
-      className={`stat-card ${compact ? 'stat-card--compact' : ''}`}
+      className={`stat-card`}
       style={{ borderTop: `4px solid ${color}` }}
     >
       <CardBody>

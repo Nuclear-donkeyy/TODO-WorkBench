@@ -15,12 +15,10 @@ export interface DashboardGridItem {
   minH?: number;
   maxW?: number;
   maxH?: number;
-  resizeHandles?: Array<'s' | 'w' | 'e' | 'n' | 'sw' | 'nw' | 'se' | 'ne'>;
 }
 
 export interface DashboardGridProps {
   items: DashboardGridItem[];
-  onLayoutChange?: (layout: Layout[], layouts: any) => void;
   isDraggable?: boolean;
   isResizable?: boolean;
   margin?: [number, number];
@@ -36,9 +34,8 @@ const defaultCols = { lg: 16, md: 12, sm: 8, xs: 6, xxs: 4 };
 export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
   const {
     items,
-    onLayoutChange,
     isDraggable = true,
-    isResizable = true,
+    isResizable = false,
     margin = [16, 16],
     containerPadding = [16, 16],
     rowHeight = 120,
@@ -58,9 +55,8 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
   const handleLayoutChange = useCallback(
     (layout: Layout[], allLayouts: any) => {
       setLayouts(allLayouts);
-      onLayoutChange?.(layout, allLayouts);
     },
-    [onLayoutChange]
+    []
   );
 
   const handleDragStart = useCallback(
@@ -96,8 +92,6 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
       _element: HTMLElement
     ) => {
       if (!draggedItem) return;
-
-      // 找出与拖拽项发生碰撞的卡片
       const draggedLayout = layout.find(item => item.i === draggedItem);
       if (!draggedLayout) return;
 
@@ -111,7 +105,6 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
           currentAffected.add(item.i);
         }
       });
-
       // 合并当前受影响的卡片和之前受影响的卡片
       const allAffected = new Set([...affectedItems, ...currentAffected]);
       setAffectedItems(allAffected);
@@ -126,7 +119,6 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
         // 为受影响的卡片计算新位置，优先考虑回到原位
         // 并检查所有已移动的卡片是否能回到原位
         const optimizedLayout = optimizeLayout(layout, allAffected);
-
         // 如果布局有变化，更新它
         if (JSON.stringify(layout) !== JSON.stringify(optimizedLayout)) {
           handleLayoutChange(optimizedLayout, {
@@ -161,7 +153,7 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
     [handleLayoutChange]
   );
 
-  const getCurrentBreakpoint = () => {
+  const getCurrentBreakpoint = (): 'lg' | 'md' | 'sm' | 'xs' | 'xxs' => {
     const width = window.innerWidth;
     if (width >= breakpoints.lg) return 'lg';
     if (width >= breakpoints.md) return 'md';
@@ -287,7 +279,7 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
     targetItem: Layout,
     excludeId: string
   ): { x: number; y: number } | null => {
-    const maxCols = cols[getCurrentBreakpoint()] || 16;
+    const maxCols: number = cols[getCurrentBreakpoint()] || 16;
     const maxSearchDistance = 10;
 
     // 从原位置开始，螺旋式搜索最近的可用位置
@@ -336,7 +328,6 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
         minH: item.minH,
         maxW: item.maxW,
         maxH: item.maxH,
-        resizeHandles: item.resizeHandles || ['se'],
       }));
     });
 
