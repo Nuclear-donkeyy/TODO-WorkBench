@@ -58,8 +58,6 @@ export const getTodoList = async (
   params: PaginationParams = { page: 1, limit: 10 }
 ): Promise<ApiResponse<PaginatedResponse<TodoItem>>> => {
   try {
-    await delay();
-
     const { page, limit } = params;
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;

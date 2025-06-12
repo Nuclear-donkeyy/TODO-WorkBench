@@ -18,7 +18,7 @@ export default function CalendarDayCell(
   const { date, isCurrentMonth, isToday, todos, onClick } = props;
 
   const dayNumber = dayjs(date).date();
-  const maxVisibleTodos = 3; // 最多显示3个TODO项
+  const maxVisibleTodos = 3;
   const remainingCount = todos.length - maxVisibleTodos;
 
   return (

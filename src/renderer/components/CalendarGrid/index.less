@@ -5,10 +5,9 @@
   flex-direction: column;
 
   .week-header {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    background-color: #f3f4f6;
-    border-radius: 8px;
     margin-bottom: 12px;
     padding: 12px 0;
 
@@ -17,6 +16,15 @@
       font-weight: 600;
       color: #6b7280;
       font-size: 14px;
+    }
+    &::after {
+      content: '';
+      background-color: var(--primary-color);
+      height: 3px;
+      width: 100%;
+      position: absolute;
+      left: 0;
+      bottom: 0;
     }
   }
 

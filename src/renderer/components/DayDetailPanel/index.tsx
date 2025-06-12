@@ -1,6 +1,5 @@
 import React from 'react';
-import { Empty, Button, message } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Empty, message } from 'antd';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import { TodoItem } from '../../api/TODOList/types';
@@ -78,15 +77,7 @@ export default function DayDetailPanel(
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description='这一天还没有任务'
             style={{ marginTop: 40 }}
-          >
-            <Button
-              type='primary'
-              icon={<PlusOutlined />}
-              style={{ borderRadius: '8px' }}
-            >
-              添加任务
-            </Button>
-          </Empty>
+          ></Empty>
         ) : (
           <div className='todos-list'>
             {todos.map(todo => (
