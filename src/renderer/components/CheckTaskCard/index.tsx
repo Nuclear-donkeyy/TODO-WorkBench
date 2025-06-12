@@ -39,7 +39,7 @@ export default function CheckTaskCard(props: CheckTaskCardProps): JSX.Element {
     delete: false,
   });
 
-  const handleCheckIn = async () => {
+  const handleCheckIn = async (): Promise<void> => {
     setLoadingStates(prev => ({ ...prev, checkIn: true }));
     try {
       await onCheckIn(task.id);
@@ -48,7 +48,7 @@ export default function CheckTaskCard(props: CheckTaskCardProps): JSX.Element {
     }
   };
 
-  const handleResetCheckIn = async () => {
+  const handleResetCheckIn = async (): Promise<void> => {
     setLoadingStates(prev => ({ ...prev, reset: true }));
     try {
       await onResetCheckIn(task.id);
@@ -57,7 +57,7 @@ export default function CheckTaskCard(props: CheckTaskCardProps): JSX.Element {
     }
   };
 
-  const handleDeleteTask = async () => {
+  const handleDeleteTask = async (): Promise<void> => {
     setLoadingStates(prev => ({ ...prev, delete: true }));
     try {
       await onDeleteTask(task.id);

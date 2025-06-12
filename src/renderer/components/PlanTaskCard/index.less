@@ -1,0 +1,133 @@
+@import url('../../variables.less');
+
+.task-card {
+  background-color: var(--surface-primary);
+  border: 1px solid var(--border-light);
+  border-radius: @border-radius-xl;
+  overflow: hidden;
+  transition: all @transition-normal ease;
+  cursor: pointer;
+  box-shadow: @box-shadow-sm-light-scheme;
+
+  &:hover {
+    box-shadow: @box-shadow-md-light-scheme;
+    border-color: var(--border-medium);
+    transform: translateY(-2px);
+  }
+
+  &.expanded {
+    cursor: default;
+    box-shadow: @box-shadow-md-light-scheme;
+    border-color: var(--accent-color);
+  }
+
+  .task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background-color: var(--surface-primary);
+    transition: background-color @transition-fast ease;
+
+    &:hover {
+      background-color: var(--surface-secondary);
+    }
+
+    .task-info {
+      flex: 1;
+
+      .task-title {
+        margin: 0;
+        font-size: @font-size-xl;
+        font-weight: @font-weight-bold;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+      }
+
+      .task-description {
+        margin: 0;
+        font-size: @font-size-small;
+        color: var(--text-secondary);
+      }
+    }
+
+    .task-progress {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .progress-text {
+        font-size: @font-size-small;
+        font-weight: @font-weight-bold;
+        color: var(--text-tertiary);
+        background-color: var(--surface-tertiary);
+        padding: 4px 8px;
+        border-radius: @border-radius-pill;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 4px;
+        opacity: 0;
+        transition: opacity @transition-fast ease;
+
+        .ant-btn {
+          width: 28px;
+          height: 28px;
+          border-radius: @border-radius-md;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            background-color: var(--surface-tertiary);
+          }
+
+          &.ant-btn-dangerous:hover {
+            background-color: var(--danger-soft);
+            color: var(--danger-color);
+          }
+        }
+      }
+    }
+
+    &:hover .action-buttons {
+      opacity: 1;
+    }
+  }
+
+  .task-details {
+    background-color: var(--surface-secondary);
+    border-top: 1px solid var(--border-light);
+    padding: 24px;
+
+    .progress-bar-container {
+      margin-bottom: 24px;
+
+      .ant-progress {
+        .ant-progress-bg {
+          border-radius: @border-radius-sm;
+        }
+      }
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .task-card {
+    .task-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+
+      .task-progress {
+        justify-content: space-between;
+      }
+    }
+
+    .task-details {
+      padding: 16px;
+    }
+  }
+}

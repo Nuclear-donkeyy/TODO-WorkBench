@@ -1,23 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Button, Input, Modal, Progress, message } from 'antd';
-import {
-  PlusOutlined,
-  EllipsisOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons';
+import { Button, Input, Modal, message } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { TaskNode } from '@/renderer/components/TaskNode';
-import TaskNodesSection from '@/renderer/components/TaskNodesSection';
+import PlanTaskCard, { PlanTask } from '@/renderer/components/PlanTaskCard';
 import './index.less';
-
-// 计划任务接口
-interface PlanTask {
-  id: string;
-  title: string;
-  description?: string;
-  nodes: TaskNode[];
-  createdAt: string;
-  updatedAt: string;
-}
 
 export default function PlanningPage(): JSX.Element {
   const [tasks, setTasks] = useState<PlanTask[]>([]);
@@ -300,7 +286,7 @@ export default function PlanningPage(): JSX.Element {
   return (
     <div className='planning-page'>
       <div className='page-header'>
-        <h1>计划组织</h1>
+        <h1>长期计划</h1>
         <Button
           type='primary'
           icon={<PlusOutlined />}
@@ -311,74 +297,19 @@ export default function PlanningPage(): JSX.Element {
       </div>
 
       <div className='tasks-container'>
-        {tasks.map(task => {
-          const progress = calculateProgress(task.nodes);
-          const isExpanded = expandedTask === task.id;
-
-          return (
-            <div
-              key={task.id}
-              className={`task-card ${isExpanded ? 'expanded' : ''}`}
-            >
-              <div
-                className='task-header'
-                onClick={() => toggleTaskExpansion(task.id)}
-              >
-                <div className='task-info'>
-                  <h3 className='task-title'>{task.title}</h3>
-                  {task.description && (
-                    <p className='task-description'>{task.description}</p>
-                  )}
-                </div>
-                <div className='task-progress'>
-                  <span className='progress-text'>
-                    进度 {progress.completed}/{progress.total}
-                  </span>
-                  <div className='action-buttons'>
-                    <Button
-                      type='text'
-                      icon={<EllipsisOutlined />}
-                      size='small'
-                    />
-                    <Button
-                      type='text'
-                      icon={<DeleteOutlined />}
-                      size='small'
-                      danger
-                      onClick={e => {
-                        e.stopPropagation();
-                        handleDeleteTask(task.id);
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {isExpanded && (
-                <div className='task-details'>
-                  <div className='progress-bar-container'>
-                    <Progress
-                      percent={progress.percentage}
-                      strokeColor='var(--accent-color)'
-                      trailColor='var(--surface-tertiary)'
-                    />
-                  </div>
-
-                  <TaskNodesSection
-                    nodes={task.nodes}
-                    onAddNode={(title: string) => handleAddNode(task.id, title)}
-                    onToggleNodeComplete={(nodeId: string) =>
-                      toggleNodeComplete(task.id, nodeId)
-                    }
-                    onDeleteNode={(nodeId: string) =>
-                      handleDeleteNode(task.id, nodeId)
-                    }
-                  />
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {tasks.map(task => (
+          <PlanTaskCard
+            key={task.id}
+            task={task}
+            isExpanded={expandedTask === task.id}
+            onToggleExpansion={toggleTaskExpansion}
+            onDeleteTask={handleDeleteTask}
+            onAddNode={handleAddNode}
+            onToggleNodeComplete={toggleNodeComplete}
+            onDeleteNode={handleDeleteNode}
+            calculateProgress={calculateProgress}
+          />
+        ))}
       </div>
 
       <Modal
