@@ -1,28 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  message,
-  Badge,
-  Progress,
-  Modal,
-  Form,
-  Input,
-  Popconfirm,
-} from 'antd';
-import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { SkeletonLoading } from '../../components/Loading';
-import { useLoading, LoadingKeys } from '../../hooks/useLoading';
+import { Button, message, Modal, Form, Input, Progress } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import CheckTaskCard, { CheckInTask } from '../../components/CheckTaskCard';
 import './index.less';
-
-interface CheckInTask {
-  id: string;
-  title: string;
-  description: string;
-  isCheckedIn: boolean;
-  checkedInAt?: string;
-  streak: number; // 连续打卡天数
-  progress?: number; // 进度百分比
-}
 
 interface TaskFormData {
   title: string;
@@ -87,91 +67,73 @@ export default function CheckPage(): JSX.Element {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<CheckInTask | null>(null);
   const [isManageMode, setIsManageMode] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [form] = Form.useForm();
 
-  // 使用统一的加载状态管理
-  const { isLoading, withLoading } = useLoading();
+  // 表单提交的加载状态
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   useEffect(() => {
     setTodayTotal(tasks.length);
     setTodayCompleted(tasks.filter(task => task.isCheckedIn).length);
   }, [tasks]);
 
-  // 模拟初始加载
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsInitialLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+  const handleCheckIn = async (taskId: string): Promise<void> => {
+    // 模拟网络请求延迟
+    await new Promise(resolve => setTimeout(resolve, 800));
 
-  const handleCheckIn = withLoading(
-    LoadingKeys.CHECKIN,
-    async (taskId: string) => {
-      // 模拟网络请求延迟
-      await new Promise(resolve => setTimeout(resolve, 800));
+    setTasks(prevTasks =>
+      prevTasks.map(task => {
+        if (task.id === taskId && !task.isCheckedIn) {
+          message.success(`${task.title} 打卡成功！`);
+          return {
+            ...task,
+            isCheckedIn: true,
+            checkedInAt: new Date().toLocaleString(),
+            streak: task.streak + 1,
+            progress: Math.min(100, (task.progress ?? 0) + 10),
+          };
+        }
+        return task;
+      })
+    );
+  };
 
-      setTasks(prevTasks =>
-        prevTasks.map(task => {
-          if (task.id === taskId && !task.isCheckedIn) {
-            message.success(`${task.title} 打卡成功！`);
-            return {
-              ...task,
-              isCheckedIn: true,
-              checkedInAt: new Date().toLocaleString(),
-              streak: task.streak + 1,
-              progress: Math.min(100, (task.progress ?? 0) + 10),
-            };
-          }
-          return task;
-        })
-      );
-    }
-  );
+  const handleDeleteTask = async (taskId: string): Promise<void> => {
+    // 模拟删除请求延迟
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-  const handleDeleteTask = withLoading(
-    LoadingKeys.DELETE,
-    async (taskId: string) => {
-      // 模拟删除请求延迟
-      await new Promise(resolve => setTimeout(resolve, 500));
+    const task = tasks.find(t => t.id === taskId);
+    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+    message.success(`已删除打卡项：${task?.title}`);
+  };
 
-      const task = tasks.find(t => t.id === taskId);
-      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-      message.success(`已删除打卡项：${task?.title}`);
-    }
-  );
+  const handleResetCheckIn = async (taskId: string): Promise<void> => {
+    // 模拟重置请求延迟
+    await new Promise(resolve => setTimeout(resolve, 400));
 
-  const handleResetCheckIn = withLoading(
-    LoadingKeys.RESET,
-    async (taskId: string) => {
-      // 模拟重置请求延迟
-      await new Promise(resolve => setTimeout(resolve, 400));
+    setTasks(prevTasks =>
+      prevTasks.map(task => {
+        if (task.id === taskId && task.isCheckedIn) {
+          message.success(`${task.title} 打卡状态已重置`);
+          const { ...resetTask } = task;
+          return {
+            ...resetTask,
+            isCheckedIn: false,
+            progress: Math.max(0, (task.progress ?? 0) - 10),
+          };
+        }
+        return task;
+      })
+    );
+  };
 
-      setTasks(prevTasks =>
-        prevTasks.map(task => {
-          if (task.id === taskId && task.isCheckedIn) {
-            message.success(`${task.title} 打卡状态已重置`);
-            const { ...resetTask } = task;
-            return {
-              ...resetTask,
-              isCheckedIn: false,
-              progress: Math.max(0, (task.progress ?? 0) - 10),
-            };
-          }
-          return task;
-        })
-      );
-    }
-  );
-
-  const handleAddTask = () => {
+  const handleAddTask = (): void => {
     setEditingTask(null);
     form.resetFields();
     setIsModalOpen(true);
   };
 
-  const handleEditTask = (task: CheckInTask) => {
+  const handleEditTask = (task: CheckInTask): void => {
     setEditingTask(task);
     form.setFieldsValue({
       title: task.title,
@@ -180,7 +142,8 @@ export default function CheckPage(): JSX.Element {
     setIsModalOpen(true);
   };
 
-  const handleSubmitTask = withLoading(LoadingKeys.SUBMIT, async () => {
+  const handleUpdateCheckItem = async (): Promise<void> => {
+    setSubmitLoading(true);
     try {
       const values: TaskFormData = await form.validateFields();
 
@@ -220,42 +183,16 @@ export default function CheckPage(): JSX.Element {
       form.resetFields();
     } catch (error) {
       console.error('表单验证失败:', error);
+    } finally {
+      setSubmitLoading(false);
     }
-  });
+  };
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     setIsModalOpen(false);
     setEditingTask(null);
     form.resetFields();
   };
-
-  // 如果是初始加载，显示骨架屏
-  if (isInitialLoading) {
-    return (
-      <div className='check-page-container'>
-        <div className='check-header'>
-          <div className='header-content'>
-            <h1 className='page-title'>打卡管理</h1>
-            <div className='today-stats'>
-              <div className='stats-item'>
-                <span className='stats-label'>今日完成</span>
-                <span className='stats-value'>-/-</span>
-              </div>
-            </div>
-          </div>
-          <div className='header-actions'>
-            <Button size='large' loading>
-              管理模式
-            </Button>
-            <Button type='primary' size='large' loading>
-              新增打卡项
-            </Button>
-          </div>
-        </div>
-        <SkeletonLoading type='grid' rows={2} />
-      </div>
-    );
-  }
 
   return (
     <div className='check-page-container'>
@@ -316,139 +253,19 @@ export default function CheckPage(): JSX.Element {
             <div className='empty-content'>
               <h3>还没有打卡项</h3>
               <p>点击上方&quot;新增打卡项&quot;按钮创建你的第一个打卡项吧</p>
-              <Button
-                type='primary'
-                size='large'
-                icon={<PlusOutlined />}
-                onClick={handleAddTask}
-              >
-                立即创建
-              </Button>
             </div>
           </div>
         ) : (
           tasks.map(task => (
-            <div
+            <CheckTaskCard
               key={task.id}
-              className={`task-card ${task.isCheckedIn ? 'checked-in' : ''} ${isManageMode ? 'manage-mode' : ''}`}
-            >
-              <div className='task-header'>
-                <div className='task-info'>
-                  <Badge
-                    count={task.streak}
-                    style={{
-                      backgroundColor: 'var(--primary-color)',
-                      color: 'white',
-                      fontSize: '12px',
-                    }}
-                    title={`连续${task.streak}天`}
-                  />
-                </div>
-                <div className='task-operations'>
-                  {task.isCheckedIn && (
-                    <div className='check-status'>
-                      <span className='check-icon'>✓</span>
-                    </div>
-                  )}
-                  {isManageMode && (
-                    <div className='operation-buttons'>
-                      <Button
-                        type='text'
-                        size='small'
-                        icon={<EditOutlined />}
-                        onClick={() => handleEditTask(task)}
-                        className='edit-btn'
-                        title='编辑信息'
-                      />
-                      <Popconfirm
-                        title='确定删除这个打卡项吗？'
-                        description='删除后将无法恢复'
-                        onConfirm={() => handleDeleteTask(task.id)}
-                        okText='确定'
-                        cancelText='取消'
-                        okType='danger'
-                      >
-                        <Button
-                          type='text'
-                          size='small'
-                          icon={<DeleteOutlined />}
-                          className='delete-btn'
-                          title='删除打卡项'
-                          danger
-                          loading={isLoading(LoadingKeys.DELETE)}
-                        />
-                      </Popconfirm>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className='task-content'>
-                <h3 className='task-title'>{task.title}</h3>
-                {task.description && (
-                  <p className='task-description'>{task.description}</p>
-                )}
-
-                {task.progress !== undefined && (
-                  <div className='task-progress'>
-                    <Progress
-                      percent={task.progress}
-                      size='small'
-                      strokeColor='var(--primary-color)'
-                      showInfo={false}
-                    />
-                    <span className='progress-text'>{task.progress}%</span>
-                  </div>
-                )}
-
-                {task.isCheckedIn && task.checkedInAt && (
-                  <div className='check-time'>
-                    <span>已打卡：{task.checkedInAt}</span>
-                  </div>
-                )}
-              </div>
-
-              {!isManageMode && (
-                <div className='task-actions'>
-                  {task.isCheckedIn ? (
-                    <div className='checked-actions'>
-                      <Button
-                        className='checked-btn'
-                        disabled
-                        icon={<span>✓</span>}
-                      >
-                        已打卡
-                      </Button>
-                      <Popconfirm
-                        title='确定重置打卡状态吗？'
-                        description='重置后可以重新打卡'
-                        onConfirm={() => handleResetCheckIn(task.id)}
-                        okText='确定'
-                        cancelText='取消'
-                      >
-                        <Button
-                          type='text'
-                          size='small'
-                          className='reset-btn'
-                          loading={isLoading(LoadingKeys.RESET)}
-                        >
-                          重置
-                        </Button>
-                      </Popconfirm>
-                    </div>
-                  ) : (
-                    <Button
-                      type='primary'
-                      className='check-btn'
-                      onClick={() => handleCheckIn(task.id)}
-                      loading={isLoading(LoadingKeys.CHECKIN)}
-                    >
-                      打卡
-                    </Button>
-                  )}
-                </div>
-              )}
-            </div>
+              task={task}
+              isManageMode={isManageMode}
+              onCheckIn={handleCheckIn}
+              onResetCheckIn={handleResetCheckIn}
+              onEditTask={handleEditTask}
+              onDeleteTask={handleDeleteTask}
+            />
           ))
         )}
       </div>
@@ -457,11 +274,11 @@ export default function CheckPage(): JSX.Element {
       <Modal
         title={editingTask ? '编辑打卡项' : '新增打卡项'}
         open={isModalOpen}
-        onOk={handleSubmitTask}
+        onOk={handleUpdateCheckItem}
         onCancel={handleCancel}
         okText={editingTask ? '保存' : '创建'}
         cancelText='取消'
-        confirmLoading={isLoading(LoadingKeys.SUBMIT)}
+        confirmLoading={submitLoading}
         width={480}
         className='task-modal'
       >
