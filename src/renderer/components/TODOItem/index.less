@@ -244,16 +244,23 @@
   .edit-block {
     width: 100%;
     background: var(--surface-secondary);
-    transition: all 0.4s;
     overflow: hidden;
-    padding: 0;
     display: flex;
     flex-direction: column;
     border-top: 1px solid var(--border-light);
+    // 优化的动画属性，避免使用 all
+    // 使用 GPU 加速和优化的 timing function
+    will-change: max-height, opacity, padding;
+    transition:
+      max-height 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+      opacity 0.25s ease-in-out 0.05s,
+      // 轻微延迟透明度动画，让高度先开始
+      padding 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
 
     &.hide {
-      height: 0;
+      max-height: 0;
       opacity: 0;
+      will-change: auto;
     }
 
     &.show {
@@ -262,6 +269,8 @@
 
       .ant-form {
         height: 100%;
+        // 表单内容渐入动画
+        animation: fadeInUp 0.4s ease-in-out 0.1s both;
 
         .ant-form-item {
           margin-bottom: 16px;
@@ -384,6 +393,18 @@
     100% {
       opacity: 1;
       transform: scale(1);
+    }
+  }
+
+  // 表单内容渐入动画
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 }
