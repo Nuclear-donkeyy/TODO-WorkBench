@@ -17,13 +17,6 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
-    fallback: {
-      process: require.resolve('process/browser.js'),
-      Buffer: require.resolve('buffer'),
-      util: require.resolve('util/'),
-      stream: require.resolve('stream-browserify'),
-      events: require.resolve('events/'),
-    },
   },
   module: {
     rules: [
@@ -48,10 +41,6 @@ module.exports = {
     ],
   },
   plugins: [
-    new webpack.ProvidePlugin({
-      process: 'process/browser.js',
-      Buffer: ['buffer', 'Buffer'],
-    }),
     new HtmlWebpackPlugin({
       template: './index.html',
       filename: 'index.html',
@@ -61,7 +50,7 @@ module.exports = {
         {
           from: 'styles.css',
           to: 'styles.css',
-          noErrorOnMissing: true, // 如果文件不存在也不报错
+          noErrorOnMissing: true,
         },
       ],
     }),
