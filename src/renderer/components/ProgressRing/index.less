@@ -1,0 +1,125 @@
+@import '../../design-system/styles/tokens.less';
+
+.progress-ring {
+  position: relative;
+
+  &--sm {
+    min-height: 180px;
+  }
+
+  &--md {
+    min-height: 240px;
+  }
+
+  &--lg {
+    min-height: 300px;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+    height: 100%;
+  }
+
+  &__title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    text-align: center;
+    margin: 0;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  &__chart-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+  }
+
+  &__center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  &__percentage {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: 1;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  &__details {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+  }
+
+  &__legend {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    width: 100%;
+  }
+
+  &__legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    justify-content: center;
+  }
+
+  &__legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &__legend-text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+  }
+
+  // 小尺寸样式调整
+  &--sm {
+    .progress-ring__title {
+      font-size: var(--font-size-base);
+    }
+
+    .progress-ring__percentage {
+      font-size: var(--font-size-xl);
+    }
+
+    .progress-ring__details {
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  // 大尺寸样式调整
+  &--lg {
+    .progress-ring__title {
+      font-size: var(--font-size-xl);
+    }
+
+    .progress-ring__percentage {
+      font-size: var(--font-size-4xl);
+    }
+
+    .progress-ring__legend-text {
+      font-size: var(--font-size-base);
+    }
+  }
+}

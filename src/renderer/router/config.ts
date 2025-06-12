@@ -14,6 +14,11 @@ export const routers: Array<IRouter> = [
     component: React.lazy(() => import('../App')),
     children: [
       {
+        name: '仪表板',
+        path: 'dashboard',
+        component: React.lazy(() => import('../page/DashboardPage')),
+      },
+      {
         name: '代办列表',
         path: 'todoList',
         component: React.lazy(() => import('../page/TODOPage')),

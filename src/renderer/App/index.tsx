@@ -16,6 +16,7 @@ export default function App(): JSX.Element {
 
   // 路由映射
   const routeMap: Record<string, string> = {
+    仪表板: 'dashboard',
     待办事项: 'todoList',
     日历: 'calendar',
     记事本: 'notebook',
@@ -24,6 +25,13 @@ export default function App(): JSX.Element {
     设置: 'setting',
     测试: 'test',
   };
+
+  // 默认路由重定向
+  useEffect(() => {
+    if (location.pathname === '/') {
+      navigate('dashboard');
+    }
+  }, [location.pathname, navigate]);
 
   // 响应窗口大小变化
   useEffect(() => {
@@ -43,6 +51,11 @@ export default function App(): JSX.Element {
 
   // 菜单项配置，使用navigate进行路由跳转
   const menuItemProps: MenuItemProp[] = [
+    {
+      name: '仪表板',
+      icon: 'icon-daka',
+      callback: () => navigate(routeMap['仪表板']),
+    },
     {
       name: '待办事项',
       icon: 'icon-daibanrenwu',
@@ -95,7 +108,7 @@ export default function App(): JSX.Element {
             const currentRoute = routeMap[item.name];
             const isActive =
               location.pathname === `/${currentRoute}` ||
-              (location.pathname === '/' && currentRoute === 'todoList'); // 默认路由
+              (location.pathname === '/' && currentRoute === 'dashboard'); // 默认路由
 
             return (
               <MenuItem

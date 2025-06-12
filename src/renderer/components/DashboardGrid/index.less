@@ -1,0 +1,147 @@
+@import '../../design-system/styles/tokens.less';
+@import 'react-grid-layout/css/styles.css';
+@import 'react-resizable/css/styles.css';
+
+.dashboard-grid {
+  width: 100%;
+  height: 100%;
+
+  .layout {
+    position: relative;
+  }
+
+  &__item {
+    position: relative;
+    background: transparent;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-normal);
+
+    &:hover {
+      .dashboard-grid__drag-handle {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    // 拖拽中的样式
+    &.react-draggable-dragging,
+    &--dragging {
+      z-index: 999 !important;
+      transform: rotate(1deg) scale(1.02);
+
+      .dashboard-grid__content {
+        box-shadow: var(--shadow-2xl);
+        border: 2px solid var(--color-primary);
+      }
+
+      .dashboard-grid__drag-handle {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+    }
+
+    // 避让中的样式
+    &--avoiding {
+      .dashboard-grid__content {
+        opacity: 0.7;
+        transform: scale(0.98);
+        transition: all var(--transition-fast);
+      }
+    }
+  }
+
+  &__drag-handle {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 20;
+    cursor: grab;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: all var(--transition-fast);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--border-radius-sm);
+    padding: 6px;
+    box-shadow: var(--shadow-sm);
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background: rgba(255, 255, 255, 1);
+      box-shadow: var(--shadow-md);
+      transform: translateY(0);
+    }
+
+    &:active {
+      cursor: grabbing;
+      transform: scale(1.1);
+    }
+  }
+
+  &__drag-dots {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    width: 10px;
+    height: 7px;
+
+    span {
+      width: 1.5px;
+      height: 1.5px;
+      background: var(--color-text-tertiary);
+      border-radius: 50%;
+      transition: background-color var(--transition-fast);
+    }
+  }
+
+  &__drag-handle:hover &__drag-dots span {
+    background: var(--color-primary);
+  }
+
+  &__content {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-normal);
+  }
+}
+
+// React Grid Layout 样式重写
+.react-grid-item {
+  background: transparent !important;
+
+  &.react-grid-placeholder {
+    background: var(--color-primary-50) !important;
+    border: 2px dashed var(--color-primary) !important;
+    border-radius: var(--border-radius-lg) !important;
+    opacity: 0.6;
+    z-index: 2;
+    user-select: none;
+    animation: dashboardPlaceholder 1s infinite;
+  }
+}
+
+@keyframes dashboardPlaceholder {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+// 响应式调整
+@media (max-width: 768px) {
+  .dashboard-grid {
+    &__drag-handle {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
