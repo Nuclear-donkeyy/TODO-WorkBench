@@ -15,7 +15,7 @@ interface TODOItemProps {
   id?: string;
   content: string;
   color: string;
-  completed?: boolean; // 添加completed属性
+  completed?: boolean;
   description?: string;
   startDate?: string;
   endDate?: string;
@@ -166,12 +166,7 @@ export default function TODOItem(props: TODOItemProps): JSX.Element {
             <Input placeholder='请输入任务名称' />
           </Form.Item>
           <Form.Item<FieldType> label='任务描述' name='taskDesc'>
-            <Input.TextArea
-              placeholder='请输入任务描述'
-              rows={2}
-              showCount
-              maxLength={200}
-            />
+            <Input placeholder='请输入任务描述' />
           </Form.Item>
           <Form.Item<FieldType> label='任务期限' name='taskPeriod'>
             <RangePicker
