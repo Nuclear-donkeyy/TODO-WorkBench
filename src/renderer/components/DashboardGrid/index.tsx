@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
 import './index.less';
 
@@ -50,7 +50,6 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
     Map<string, Layout>
   >(new Map());
   const [affectedItems, setAffectedItems] = useState<Set<string>>(new Set());
-  const dragTimeoutRef = useRef<NodeJS.Timeout>();
 
   const handleLayoutChange = useCallback(
     (layout: Layout[], allLayouts: any) => {
@@ -97,10 +96,9 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
 
       const currentAffected = new Set<string>();
 
+      // 检查是否与拖拽项发生碰撞
       layout.forEach(item => {
         if (item.i === draggedItem) return;
-
-        // 检查是否与拖拽项发生碰撞
         if (isColliding(draggedLayout, item)) {
           currentAffected.add(item.i);
         }
@@ -109,23 +107,10 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
       const allAffected = new Set([...affectedItems, ...currentAffected]);
       setAffectedItems(allAffected);
 
-      // 清除之前的防抖定时器
-      if (dragTimeoutRef.current) {
-        clearTimeout(dragTimeoutRef.current);
-      }
-
-      // 使用防抖来优化性能，避免过度计算
-      dragTimeoutRef.current = setTimeout(() => {
-        // 为受影响的卡片计算新位置，优先考虑回到原位
-        // 并检查所有已移动的卡片是否能回到原位
-        const optimizedLayout = optimizeLayout(layout, allAffected);
-        // 如果布局有变化，更新它
-        if (JSON.stringify(layout) !== JSON.stringify(optimizedLayout)) {
-          handleLayoutChange(optimizedLayout, {
-            [getCurrentBreakpoint()]: optimizedLayout,
-          });
-        }
-      }, 50); // 50ms 防抖延迟
+      const optimizedLayout = optimizeLayout(layout, allAffected);
+      handleLayoutChange(optimizedLayout, {
+        [getCurrentBreakpoint()]: optimizedLayout,
+      });
     },
     [draggedItem, originalPositions, affectedItems, handleLayoutChange]
   );
@@ -139,11 +124,6 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
       _e: MouseEvent,
       _element: HTMLElement
     ) => {
-      // 清除防抖定时器
-      if (dragTimeoutRef.current) {
-        clearTimeout(dragTimeoutRef.current);
-      }
-
       setIsDragging(false);
       setDraggedItem(null);
       setOriginalPositions(new Map());
@@ -193,8 +173,8 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
     affected: Set<string>
   ): Layout[] => {
     const newLayout = [...currentLayout];
-
-    // 第一轮：处理新受影响的卡片
+    const processed: string[] = [];
+    // 处理受影响的卡片
     affected.forEach(itemId => {
       const currentItem = newLayout.find(item => item.i === itemId);
       const originalItem = originalPositions.get(itemId);
@@ -215,6 +195,7 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
         // 可以回到原位
         currentItem.x = originalItem.x;
         currentItem.y = originalItem.y;
+        processed.push(itemId);
       } else {
         // 不能回到原位，寻找最近的可用位置
         const newPosition = findNearestAvailablePosition(
@@ -228,48 +209,9 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
         }
       }
     });
-
-    // 第二轮：检查所有已经被移动过的卡片是否能回到原位
-    // 这里需要多次迭代，因为一个卡片回到原位可能会为其他卡片腾出空间
-    let hasChanges = true;
-    let maxIterations = 5; // 防止无限循环
-
-    while (hasChanges && maxIterations > 0) {
-      hasChanges = false;
-      maxIterations--;
-
-      // 遍历所有有原始位置记录的卡片
-      originalPositions.forEach((originalItem, itemId) => {
-        if (itemId === draggedItem) return; // 跳过拖拽中的卡片
-
-        const currentItem = newLayout.find(item => item.i === itemId);
-        if (!currentItem) return;
-
-        // 检查这个卡片是否已经在原位置
-        const isInOriginalPosition =
-          currentItem.x === originalItem.x && currentItem.y === originalItem.y;
-
-        if (!isInOriginalPosition) {
-          // 检查原位置现在是否可用
-          const canReturnToOriginal = !isPositionOccupied(
-            newLayout.filter(item => item.i !== itemId),
-            originalItem.x,
-            originalItem.y,
-            originalItem.w,
-            originalItem.h,
-            itemId
-          );
-
-          if (canReturnToOriginal) {
-            // 可以回到原位，移动它
-            currentItem.x = originalItem.x;
-            currentItem.y = originalItem.y;
-            hasChanges = true;
-          }
-        }
-      });
-    }
-
+    processed.forEach(itemId => {
+      affected.delete(itemId);
+    });
     return newLayout;
   };
 
@@ -352,13 +294,11 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
         onDragStop={handleDragStop}
         draggableHandle='.dashboard-grid__drag-handle'
         useCSSTransforms={false}
-        autoSize={true}
         compactType={null}
-        preventCollision={false}
+        preventCollision={true}
         allowOverlap={true}
         isBounded={false}
         transformScale={1}
-        verticalCompact={false}
         droppingItem={undefined}
       >
         {items.map(item => (
