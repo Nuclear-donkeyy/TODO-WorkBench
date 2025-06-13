@@ -22,7 +22,7 @@ const routeRender = (router: Array<IRouter>): JSX.Element[] => {
 };
 
 const RouteRender: React.FC = (): JSX.Element => {
-  const routes = useMemo(() => routeRender(routers), []); //不需要依赖项，routers是硬编码的
+  const routes = useMemo(() => routeRender(routers), []);
   return <Routes>{routes}</Routes>;
 };
 

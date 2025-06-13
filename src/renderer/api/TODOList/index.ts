@@ -1,8 +1,4 @@
-import {
-  ApiResponse,
-  PaginationParams,
-  PaginatedResponse,
-} from '../types/todo';
+import { ApiResponse } from '../types/todo';
 import { CreateTodoParams, TodoItem, UpdateTodoParams } from './types';
 
 // 模拟数据存储
@@ -40,6 +36,39 @@ let mockTodos: TodoItem[] = [
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
+  {
+    id: '4',
+    content: '哈牛魔',
+    color: '#667eea',
+    description: '编写技术文档和用户手册',
+    startDate: '2024-01-15',
+    endDate: '2024-01-20',
+    completed: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '5',
+    content: '摸南北绿豆',
+    color: '#00d4aa',
+    description: '审查团队成员提交的代码',
+    startDate: '2024-01-16',
+    endDate: '2024-01-17',
+    completed: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: '6',
+    content: '哈基米',
+    color: '#ef4444',
+    description: '为客户演示准备材料',
+    startDate: '2024-01-18',
+    endDate: '2024-01-22',
+    completed: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
 ];
 
 // 模拟网络延迟
@@ -52,64 +81,18 @@ const generateId = (): string => {
 };
 
 /**
- * 获取TODO列表（分页）
+ * 获取TODO列表
  */
-export const getTodoList = async (
-  params: PaginationParams = { page: 1, limit: 10 }
-): Promise<ApiResponse<PaginatedResponse<TodoItem>>> => {
+export const getTodoList = async (): Promise<ApiResponse<TodoItem[]>> => {
   try {
-    const { page, limit } = params;
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-
-    const items = mockTodos.slice(startIndex, endIndex);
-    const total = mockTodos.length;
-    const hasMore = endIndex < total;
-
     return {
       success: true,
-      data: {
-        items,
-        total,
-        page,
-        limit,
-        hasMore,
-      },
+      data: mockTodos,
     };
   } catch (error) {
     return {
       success: false,
       error: '获取TODO列表失败',
-    };
-  }
-};
-
-/**
- * 获取单个TODO详情
- */
-export const getTodoById = async (
-  id: string
-): Promise<ApiResponse<TodoItem>> => {
-  try {
-    await delay(300);
-
-    const todo = mockTodos.find(item => item.id === id);
-
-    if (!todo) {
-      return {
-        success: false,
-        error: '未找到指定的TODO任务',
-      };
-    }
-
-    return {
-      success: true,
-      data: todo,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: '获取TODO详情失败',
     };
   }
 };
@@ -121,8 +104,6 @@ export const createTodo = async (
   params: CreateTodoParams
 ): Promise<ApiResponse<TodoItem>> => {
   try {
-    await delay(600);
-
     const newTodo: TodoItem = {
       id: generateId(),
       ...params,

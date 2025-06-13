@@ -21,7 +21,7 @@ interface TODOItemProps {
   endDate?: string;
   onComplete?: () => void;
   onDelete?: () => void;
-  refresh?: () => void;
+  refresh: () => void;
 }
 
 type FieldType = {
@@ -78,7 +78,7 @@ export default function TODOItem(props: TODOItemProps): JSX.Element {
       if (response.success) {
         message.success(response.message || '任务更新成功');
         setIsExpanded(false);
-        props.refresh?.();
+        props.refresh();
       } else {
         message.error(response.error || '更新失败');
       }

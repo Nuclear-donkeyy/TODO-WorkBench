@@ -12,7 +12,7 @@ import {
   IDeleteTodosResponse,
   TodoError,
   IServerConfig,
-} from '../types';
+} from './types';
 
 const app: Application = express();
 const PORT: number = parseInt(process.env.PORT || '3001', 10);

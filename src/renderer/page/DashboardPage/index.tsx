@@ -63,9 +63,9 @@ export default function DashboardPage(): JSX.Element {
   const fetchTodos = async (): Promise<void> => {
     setLoading(true);
     try {
-      const response = await API.todo.getTodoList({ page: 1, limit: 100 });
+      const response = await API.todo.getTodoList();
       if (response.success && response.data) {
-        setTodos(response.data.items);
+        setTodos(response.data);
       }
     } catch (error) {
       console.error('获取TODO数据失败:', error);

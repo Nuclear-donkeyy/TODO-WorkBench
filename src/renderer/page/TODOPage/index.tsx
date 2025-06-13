@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Spin,
@@ -30,38 +30,32 @@ type CreateFormFields = {
   taskDesc?: string;
   taskPeriod?: [dayjs.Dayjs, dayjs.Dayjs];
 };
-
+const colors = [
+  '#667eea',
+  '#00d4aa',
+  '#ef4444',
+  '#f59e0b',
+  '#3b82f6',
+  '#8b5cf6',
+  '#06b6d4',
+  '#10b981',
+];
 export default function TODOPage(): JSX.Element {
-  const [todos, setTodos] = useState<TodoItem[]>([]);
+  const [activeTodos, setActiveTodos] = useState<TodoItem[]>([]);
+  const [completedTodos, setCompletedTodos] = useState<TodoItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [activeTab, setActiveTab] = useState('active');
   const [createForm] = Form.useForm();
-
-  // 根据完成状态分组TODO项
-  const { activeTodos, completedTodos } = useMemo(() => {
-    const active = todos.filter(todo => !todo.completed);
-    const completed = todos.filter(todo => todo.completed);
-    return { activeTodos: active, completedTodos: completed };
-  }, [todos]);
-
   // 获取TODO列表
   const fetchTodos = async (): Promise<void> => {
     setLoading(true);
     try {
-      const response = await API.todo.getTodoList({ page: 1, limit: 50 });
+      const response = await API.todo.getTodoList();
       if (response.success && response.data) {
-        // 按创建时间倒序排列，未完成的排在前面
-        const sortedTodos = response.data.items.sort((a, b) => {
-          if (a.completed !== b.completed) {
-            return a.completed ? 1 : -1;
-          }
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        });
-        setTodos(sortedTodos);
+        setActiveTodos(response.data.filter(item => !item.completed));
+        setCompletedTodos(response.data.filter(item => item.completed));
       } else {
         message.error(response.error || '获取TODO列表失败');
       }
@@ -86,16 +80,6 @@ export default function TODOPage(): JSX.Element {
   ): Promise<void> => {
     setCreating(true);
     try {
-      const colors = [
-        '#667eea',
-        '#00d4aa',
-        '#ef4444',
-        '#f59e0b',
-        '#3b82f6',
-        '#8b5cf6',
-        '#06b6d4',
-        '#10b981',
-      ];
       const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
       let startDate: string | undefined;
@@ -137,7 +121,7 @@ export default function TODOPage(): JSX.Element {
       const response = await API.todo.deleteTodo(id);
       if (response.success) {
         message.success(response.message || '删除成功');
-        setTodos(prev => prev.filter(todo => todo.id !== id));
+        fetchTodos();
       } else {
         message.error(response.error || '删除失败');
       }
@@ -155,9 +139,7 @@ export default function TODOPage(): JSX.Element {
         message.success(
           updatedTodo.completed ? '任务已完成！' : '任务重新激活'
         );
-        setTodos(prev =>
-          prev.map(todo => (todo.id === id ? updatedTodo : todo))
-        );
+        fetchTodos();
       } else {
         message.error(response.error || '操作失败');
       }

@@ -6,7 +6,7 @@ import {
   IDatabaseTodo,
   IDatabase,
   TodoError,
-} from '../types';
+} from './types';
 
 class Database implements IDatabase {
   public dbPath: string;
@@ -22,10 +22,14 @@ class Database implements IDatabase {
   public init(): void {
     this.db = new sqlite3.Database(this.dbPath, (err: Error | null) => {
       if (err) {
-        console.error('数据库连接失败:', err.message);
-        throw new TodoError('数据库连接失败', 'DB_CONNECTION_ERROR', 500);
+        console.error('[backend]数据库连接失败:', err.message);
+        throw new TodoError(
+          '[backend]数据库连接失败',
+          'DB_CONNECTION_ERROR',
+          500
+        );
       } else {
-        console.log('✅ 成功连接到SQLite数据库');
+        console.log('[backend]✅ 成功连接到SQLite数据库');
         this.createTables();
       }
     });
@@ -34,7 +38,7 @@ class Database implements IDatabase {
   // 创建表结构
   public createTables(): void {
     if (!this.db) {
-      throw new TodoError('数据库未初始化', 'DB_NOT_INITIALIZED', 500);
+      throw new TodoError('[backend]数据库未初始化', 'DB_NOT_INITIALIZED', 500);
     }
 
     const createTodosTable = `
