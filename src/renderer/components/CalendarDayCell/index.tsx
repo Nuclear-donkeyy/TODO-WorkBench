@@ -16,9 +16,8 @@ export default function CalendarDayCell(
   props: CalendarDayCellProps
 ): JSX.Element {
   const { date, isCurrentMonth, isToday, todos, onClick } = props;
-
   const dayNumber = dayjs(date).date();
-  const maxVisibleTodos = 3;
+  const maxVisibleTodos = 2;
   const remainingCount = todos.length - maxVisibleTodos;
 
   return (

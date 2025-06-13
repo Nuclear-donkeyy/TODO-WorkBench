@@ -1,89 +1,13 @@
 import { ApiResponse } from '../types/todo';
 import { CreateTodoParams, TodoItem, UpdateTodoParams } from './types';
-
-// 模拟数据存储
-let mockTodos: TodoItem[] = [
-  {
-    id: '1',
-    content: '完成项目文档',
-    color: '#667eea',
-    description: '编写技术文档和用户手册',
-    startDate: '2024-01-15',
-    endDate: '2024-01-20',
-    completed: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    content: '代码审查',
-    color: '#00d4aa',
-    description: '审查团队成员提交的代码',
-    startDate: '2024-01-16',
-    endDate: '2024-01-17',
-    completed: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    content: '准备演示',
-    color: '#ef4444',
-    description: '为客户演示准备材料',
-    startDate: '2024-01-18',
-    endDate: '2024-01-22',
-    completed: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    content: '哈牛魔',
-    color: '#667eea',
-    description: '编写技术文档和用户手册',
-    startDate: '2024-01-15',
-    endDate: '2024-01-20',
-    completed: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '5',
-    content: '摸南北绿豆',
-    color: '#00d4aa',
-    description: '审查团队成员提交的代码',
-    startDate: '2024-01-16',
-    endDate: '2024-01-17',
-    completed: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '6',
-    content: '哈基米',
-    color: '#ef4444',
-    description: '为客户演示准备材料',
-    startDate: '2024-01-18',
-    endDate: '2024-01-22',
-    completed: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
-
-// 模拟网络延迟
-const delay = (ms: number = 500): Promise<void> =>
-  new Promise(resolve => setTimeout(resolve, ms));
-
-// 生成唯一ID
-const generateId = (): string => {
-  return Date.now().toString() + Math.random().toString(36).substr(2, 9);
-};
+import { mockTodos } from '../mockdata';
+import { delay, generateId } from '../utils';
 
 /**
  * 获取TODO列表
  */
 export const getTodoList = async (): Promise<ApiResponse<TodoItem[]>> => {
+  await delay();
   try {
     return {
       success: true,
@@ -103,6 +27,7 @@ export const getTodoList = async (): Promise<ApiResponse<TodoItem[]>> => {
 export const createTodo = async (
   params: CreateTodoParams
 ): Promise<ApiResponse<TodoItem>> => {
+  await delay();
   try {
     const newTodo: TodoItem = {
       id: generateId(),
@@ -133,9 +58,8 @@ export const createTodo = async (
 export const updateTodo = async (
   params: UpdateTodoParams
 ): Promise<ApiResponse<TodoItem>> => {
+  await delay();
   try {
-    await delay(400);
-
     const todoIndex = mockTodos.findIndex(item => item.id === params.id);
 
     if (todoIndex === -1) {
@@ -171,9 +95,8 @@ export const updateTodo = async (
  * 删除TODO任务
  */
 export const deleteTodo = async (id: string): Promise<ApiResponse<boolean>> => {
+  await delay();
   try {
-    await delay(300);
-
     const todoIndex = mockTodos.findIndex(item => item.id === id);
 
     if (todoIndex === -1) {
@@ -204,9 +127,8 @@ export const deleteTodo = async (id: string): Promise<ApiResponse<boolean>> => {
 export const toggleTodoComplete = async (
   id: string
 ): Promise<ApiResponse<TodoItem>> => {
+  await delay();
   try {
-    await delay(200);
-
     const todo = mockTodos.find(item => item.id === id);
 
     if (!todo) {
@@ -234,31 +156,6 @@ export const toggleTodoComplete = async (
     return {
       success: false,
       error: '切换任务状态失败',
-    };
-  }
-};
-
-/**
- * 批量删除已完成的任务
- */
-export const deleteCompletedTodos = async (): Promise<
-  ApiResponse<{ deletedCount: number }>
-> => {
-  try {
-    await delay(500);
-
-    const completedCount = mockTodos.filter(todo => todo.completed).length;
-    mockTodos = mockTodos.filter(todo => !todo.completed);
-
-    return {
-      success: true,
-      data: { deletedCount: completedCount },
-      message: `已删除 ${completedCount} 个已完成的任务`,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: '批量删除失败',
     };
   }
 };

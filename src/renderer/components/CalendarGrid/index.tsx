@@ -1,32 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Spin } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import { TodoItem } from '../../api/TODOList/types';
 import CalendarDayCell from '../CalendarDayCell';
 import './index.less';
+import API from '@/renderer/api';
+import { TodoItem } from '@/renderer/api/TODOList/types';
 
 interface CalendarGridProps {
   currentDate: Dayjs;
-  getTodosForDate: (date: string) => TodoItem[];
   onDateClick: (date: string) => void;
-  loading: boolean;
 }
 
 export default function CalendarGrid(props: CalendarGridProps): JSX.Element {
-  const { currentDate, getTodosForDate, onDateClick, loading } = props;
-
-  // 获取当月的第一天和最后一天
+  const { currentDate, onDateClick } = props;
+  const [loading, setLoading] = useState<boolean>(true);
+  const [date2todoMap, setDate2todoMap] = useState<any>({});
+  const [calendarDays, setCalendarDays] = useState<string[]>([]);
   const startOfMonth = currentDate.startOf('month');
   const endOfMonth = currentDate.endOf('month');
-
-  // 获取日历显示的第一天（可能是上个月的最后几天）
   const startOfCalendar = startOfMonth.startOf('week');
-
-  // 获取日历显示的最后一天（可能是下个月的前几天）
-  const endOfCalendar = endOfMonth.endOf('week');
-
+  let endOfCalendar = endOfMonth.endOf('week');
+  if (endOfCalendar.diff(startOfCalendar, 'day') < 41) {
+    endOfCalendar = endOfCalendar.add(1, 'week');
+  }
   // 生成日历中的所有日期
-  const generateCalendarDays = (): string[] => {
+  const generateCalendarDays = (): void => {
     const days: string[] = [];
     let current = startOfCalendar;
 
@@ -34,15 +32,39 @@ export default function CalendarGrid(props: CalendarGridProps): JSX.Element {
       current.isBefore(endOfCalendar) ||
       current.isSame(endOfCalendar, 'day')
     ) {
-      days.push(current.format('YYYY-MM-DD'));
+      const dateString = current.format('YYYY-MM-DD');
+      days.push(dateString);
       current = current.add(1, 'day');
     }
-
-    return days;
+    setCalendarDays(days);
   };
 
-  const calendarDays = generateCalendarDays();
-  const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+  const fetchTodos = async (): Promise<void> => {
+    setLoading(true);
+    generateCalendarDays();
+    const response = await API.calendar.getAllTodosByMonth(
+      currentDate.format('YYYY-MM-DD').slice(0, 7)
+    );
+    const _date2todoMap: { [key: string]: TodoItem[] } = {};
+    if (response.success && response.data) {
+      response.data.forEach(item => {
+        if (item.endDate) {
+          const dateKey = item.endDate.slice(5, 10); // MM-DD format
+          _date2todoMap[dateKey] = _date2todoMap[dateKey]
+            ? [..._date2todoMap[dateKey], item]
+            : [item];
+        }
+      });
+    }
+    setDate2todoMap(_date2todoMap);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchTodos();
+  }, [currentDate]);
+
+  const weekDays = ['一', '二', '三', '四', '五', '六', '日'];
 
   return (
     <div className='calendar-grid'>
@@ -67,8 +89,7 @@ export default function CalendarGrid(props: CalendarGridProps): JSX.Element {
               const dayjs_date = dayjs(date);
               const isCurrentMonth = dayjs_date.month() === currentDate.month();
               const isToday = dayjs_date.isSame(dayjs(), 'day');
-              const todos = getTodosForDate(date);
-
+              const todos = date2todoMap[date.slice(5, 10)] || [];
               return (
                 <CalendarDayCell
                   key={date}

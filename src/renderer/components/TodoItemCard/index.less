@@ -15,6 +15,7 @@
     justify-content: space-between;
     gap: var(--spacing-md);
     width: 100%;
+    height: 100%;
   }
 
   &__text-wrapper {
@@ -86,29 +87,12 @@
     }
 
     .todo-item-card__text {
+      margin-left: var(--spacing-sm);
       font-size: var(--font-size-sm);
       line-height: var(--line-height-normal);
-    }
-
-    .todo-item-card__completed-badge {
-      width: 24px;
-      height: 24px;
-      font-size: var(--font-size-base);
-    }
-  }
-
-  /* 完成状态 */
-  &--completed {
-    opacity: 0.8;
-
-    .todo-item-card__text {
-      text-decoration: line-through;
-      color: var(--color-text-tertiary);
-    }
-
-    /* 悬停时恢复不透明度 */
-    &:hover {
-      opacity: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 

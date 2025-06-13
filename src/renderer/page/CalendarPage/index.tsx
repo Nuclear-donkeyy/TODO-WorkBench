@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Select, message, Drawer } from 'antd';
+import React, { useState } from 'react';
+import { Select, Drawer } from 'antd';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import weekday from 'dayjs/plugin/weekday';
@@ -12,8 +12,6 @@ dayjs.extend(weekday);
 dayjs.extend(localeData);
 dayjs.locale('zh-cn');
 
-import { API } from '../../api';
-import { TodoItem } from '../../api/TODOList/types';
 import CalendarGrid from '../../components/CalendarGrid';
 import DayDetailPanel from '../../components/DayDetailPanel';
 import './index.less';
@@ -22,8 +20,6 @@ const { Option } = Select;
 
 export default function CalendarPage(): JSX.Element {
   const [currentDate, setCurrentDate] = useState(dayjs());
-  const [todos, setTodos] = useState<TodoItem[]>([]);
-  const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
 
@@ -33,34 +29,6 @@ export default function CalendarPage(): JSX.Element {
 
   // 月份选项
   const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
-
-  // 获取TODO列表
-  const fetchTodos = async (): Promise<void> => {
-    setLoading(true);
-    try {
-      const response = await API.todo.getTodoList();
-      if (response.success && response.data) {
-        setTodos(response.data);
-      } else {
-        message.error(response.error || '获取TODO列表失败');
-      }
-    } catch (error) {
-      message.error('网络错误，请稍后重试');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 根据日期过滤TODO项
-  const getTodosForDate = (date: string): TodoItem[] => {
-    return todos.filter(todo => {
-      if (!todo.startDate || !todo.endDate) return false;
-      const todoStart = dayjs(todo.startDate);
-      const todoEnd = dayjs(todo.endDate);
-      const targetDate = dayjs(date);
-      return targetDate.isBetween(todoStart, todoEnd, 'day', '[]');
-    });
-  };
 
   // 年份改变
   const handleYearChange = (year: number): void => {
@@ -83,11 +51,6 @@ export default function CalendarPage(): JSX.Element {
     setDrawerVisible(false);
     setSelectedDate(null);
   };
-
-  // 页面初始化
-  useEffect(() => {
-    fetchTodos();
-  }, []);
 
   return (
     <div className='calendar-page'>
@@ -120,12 +83,7 @@ export default function CalendarPage(): JSX.Element {
       </div>
 
       <div className='calendar-content'>
-        <CalendarGrid
-          currentDate={currentDate}
-          getTodosForDate={getTodosForDate}
-          onDateClick={handleDateClick}
-          loading={loading}
-        />
+        <CalendarGrid currentDate={currentDate} onDateClick={handleDateClick} />
       </div>
 
       <Drawer
@@ -140,13 +98,7 @@ export default function CalendarPage(): JSX.Element {
         onClose={handleDrawerClose}
         className='day-detail-drawer'
       >
-        {selectedDate && (
-          <DayDetailPanel
-            date={selectedDate}
-            todos={getTodosForDate(selectedDate)}
-            onRefresh={fetchTodos}
-          />
-        )}
+        {selectedDate && <DayDetailPanel date={selectedDate} />}
       </Drawer>
     </div>
   );
