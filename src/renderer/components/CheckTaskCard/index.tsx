@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
-import { Button, Badge, Progress, Popconfirm } from 'antd';
+import { Button, Badge, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import './index.less';
-
-export interface CheckInTask {
-  id: string;
-  title: string;
-  description: string;
-  isCheckedIn: boolean;
-  checkedInAt?: string;
-  streak: number;
-  progress?: number;
-}
+import { CheckInTask } from '@/renderer/api/CheckIn/type';
 
 interface CheckTaskCardProps {
   task: CheckInTask;
@@ -125,18 +116,6 @@ export default function CheckTaskCard(props: CheckTaskCardProps): JSX.Element {
         <h3 className='task-title'>{task.title}</h3>
         {task.description && (
           <p className='task-description'>{task.description}</p>
-        )}
-
-        {task.progress !== undefined && (
-          <div className='task-progress'>
-            <Progress
-              percent={task.progress}
-              size='small'
-              strokeColor='var(--primary-color)'
-              showInfo={false}
-            />
-            <span className='progress-text'>{task.progress}%</span>
-          </div>
         )}
 
         {task.isCheckedIn && task.checkedInAt && (

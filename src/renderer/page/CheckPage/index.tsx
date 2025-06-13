@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Button, message, Modal, Form, Input, Progress } from 'antd';
+import { Button, message, Modal, Form, Input, Progress, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import CheckTaskCard, { CheckInTask } from '../../components/CheckTaskCard';
+import CheckTaskCard from '../../components/CheckTaskCard';
 import './index.less';
+import {
+  AddCheckInTaskParam,
+  CheckInTask,
+  CheckInTaskParam,
+  DeleteCheckInTaskParam,
+  ResetCheckInTaskParam,
+  UpdateCheckInTaskParam,
+} from '@/renderer/api/CheckIn/type';
+import API from '@/renderer/api';
 
 interface TaskFormData {
   title: string;
@@ -10,121 +19,93 @@ interface TaskFormData {
 }
 
 export default function CheckPage(): JSX.Element {
-  const [tasks, setTasks] = useState<CheckInTask[]>([
-    {
-      id: '1',
-      title: '晚上节食',
-      description: '健康、节制，比前一天的自己更好',
-      isCheckedIn: false,
-      streak: 7,
-      progress: 70,
-    },
-    {
-      id: '2',
-      title: '好好睡觉',
-      description: 'Go healthy, just sleep',
-      isCheckedIn: true,
-      checkedInAt: new Date().toLocaleString(),
-      streak: 12,
-      progress: 100,
-    },
-    {
-      id: '3',
-      title: '技术学习',
-      description: '学习技术，争取35不改咯',
-      isCheckedIn: false,
-      streak: 3,
-      progress: 25,
-    },
-    {
-      id: '4',
-      title: '步数10000+',
-      description: '保持活动',
-      isCheckedIn: false,
-      streak: 5,
-      progress: 45,
-    },
-    {
-      id: '5',
-      title: '学习强国',
-      description: '每日学习任务',
-      isCheckedIn: false,
-      streak: 15,
-      progress: 80,
-    },
-    {
-      id: '6',
-      title: '体重记录',
-      description: '记录体重变化',
-      isCheckedIn: false,
-      streak: 2,
-      progress: 15,
-    },
-  ]);
-
+  const [tasks, setTasks] = useState<CheckInTask[]>([]);
   const [todayTotal, setTodayTotal] = useState(0);
   const [todayCompleted, setTodayCompleted] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<CheckInTask | null>(null);
   const [isManageMode, setIsManageMode] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [form] = Form.useForm();
 
-  // 表单提交的加载状态
-  const [submitLoading, setSubmitLoading] = useState(false);
-
   useEffect(() => {
-    setTodayTotal(tasks.length);
-    setTodayCompleted(tasks.filter(task => task.isCheckedIn).length);
-  }, [tasks]);
+    fetchCheckInTasks();
+  }, []);
 
-  const handleCheckIn = async (taskId: string): Promise<void> => {
-    // 模拟网络请求延迟
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    setTasks(prevTasks =>
-      prevTasks.map(task => {
-        if (task.id === taskId && !task.isCheckedIn) {
-          message.success(`${task.title} 打卡成功！`);
-          return {
-            ...task,
-            isCheckedIn: true,
-            checkedInAt: new Date().toLocaleString(),
-            streak: task.streak + 1,
-            progress: Math.min(100, (task.progress ?? 0) + 10),
-          };
-        }
-        return task;
-      })
-    );
+  //获取所有打卡项数据
+  const fetchCheckInTasks = async (): Promise<void> => {
+    setIsLoading(true);
+    const response = await API.checkIn.getAllCheckIn();
+    if (response.success && response.data) {
+      setTasks(response.data);
+      setTodayTotal(response.data.length);
+      setTodayCompleted(response.data.filter(task => task.isCheckedIn).length);
+    }
+    setIsLoading(false);
   };
 
+  //删除特定打卡项数据
   const handleDeleteTask = async (taskId: string): Promise<void> => {
-    // 模拟删除请求延迟
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const task = tasks.find(t => t.id === taskId);
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-    message.success(`已删除打卡项：${task?.title}`);
+    const param: DeleteCheckInTaskParam = {
+      id: taskId,
+    };
+    const response = await API.checkIn.deleteCheckInTask(param);
+    if (response.success) {
+      fetchCheckInTasks();
+      message.success('删除成功');
+    } else {
+      message.error('删除失败');
+    }
   };
 
-  const handleResetCheckIn = async (taskId: string): Promise<void> => {
-    // 模拟重置请求延迟
-    await new Promise(resolve => setTimeout(resolve, 400));
+  //打卡
+  const handleCheckIn = async (taskId: string): Promise<void> => {
+    const param: CheckInTaskParam = {
+      id: taskId,
+    };
+    const response = await API.checkIn.checkInTask(param);
+    if (response.success) {
+      //视图数据更新
+      setTasks(prevTasks =>
+        prevTasks.map(task => {
+          if (task.id === taskId && !task.isCheckedIn) {
+            message.success(`${task.title} 打卡成功！`);
+            return {
+              ...task,
+              isCheckedIn: true,
+              checkedInAt: new Date().toLocaleString(),
+              streak: task.streak + 1,
+            };
+          }
+          return task;
+        })
+      );
+      setTodayCompleted(prevTodayCompleted => prevTodayCompleted + 1);
+    }
+  };
 
-    setTasks(prevTasks =>
-      prevTasks.map(task => {
-        if (task.id === taskId && task.isCheckedIn) {
-          message.success(`${task.title} 打卡状态已重置`);
-          const { ...resetTask } = task;
-          return {
-            ...resetTask,
-            isCheckedIn: false,
-            progress: Math.max(0, (task.progress ?? 0) - 10),
-          };
-        }
-        return task;
-      })
-    );
+  //重置打卡
+  const handleResetCheckIn = async (taskId: string): Promise<void> => {
+    const param: ResetCheckInTaskParam = {
+      id: taskId,
+    };
+    const response = await API.checkIn.resetCheckInTask(param);
+    if (response.success) {
+      //视图数据更新
+      setTasks(prevTasks =>
+        prevTasks.map(task => {
+          if (task.id === taskId && task.isCheckedIn) {
+            message.success(`${task.title} 打卡状态已重置`);
+            return {
+              ...task,
+              isCheckedIn: false,
+            };
+          }
+          return task;
+        })
+      );
+    }
   };
 
   const handleAddTask = (): void => {
@@ -142,43 +123,60 @@ export default function CheckPage(): JSX.Element {
     setIsModalOpen(true);
   };
 
-  const handleUpdateCheckItem = async (): Promise<void> => {
+  const handleUpdateOrAddCheckItem = async (): Promise<void> => {
     setSubmitLoading(true);
     try {
       const values: TaskFormData = await form.validateFields();
-
-      // 模拟提交请求延迟
-      await new Promise(resolve => setTimeout(resolve, 600));
-
       if (editingTask) {
-        // 编辑已有任务
-        setTasks(prevTasks =>
-          prevTasks.map(task =>
-            task.id === editingTask.id
-              ? {
-                  ...task,
-                  title: values.title,
-                  description: values.description || '',
-                }
-              : task
-          )
-        );
-        message.success('打卡项更新成功！');
+        //更新
+        const param: UpdateCheckInTaskParam = {
+          id: editingTask.id,
+          title: values.title,
+          description: values.description || ' ',
+        };
+        const response = await API.checkIn.updateCheckInTaskParam(param);
+        if (response.success) {
+          setTasks(
+            (
+              prevTasks //视图数据更新
+            ) =>
+              prevTasks.map(task =>
+                task.id === editingTask.id
+                  ? {
+                      ...task,
+                      title: param.title,
+                      description: param.description || '',
+                    }
+                  : task
+              )
+          );
+          message.success('打卡项更新成功！');
+        } else {
+          message.error('打卡项信息更新失败');
+        }
       } else {
-        // 新增任务
-        const newTask: CheckInTask = {
+        const param: AddCheckInTaskParam = {
           id: Date.now().toString(),
           title: values.title,
           description: values.description || '',
-          isCheckedIn: false,
+          isCheckIn: false,
           streak: 0,
-          progress: 0,
         };
-
-        setTasks(prevTasks => [...prevTasks, newTask]);
-        message.success('新建打卡项成功！');
+        const response = await API.checkIn.addCheckInTaskParam(param);
+        if (response.success) {
+          const newTask: CheckInTask = {
+            id: param.id,
+            title: param.title,
+            description: param.description,
+            isCheckedIn: param.isCheckIn,
+            streak: param.streak,
+          };
+          setTasks(prevTasks => [...prevTasks, newTask]);
+          message.success('新建打卡项成功！');
+        } else {
+          message.error('新建打卡项失败');
+        }
       }
-
       setIsModalOpen(false);
       form.resetFields();
     } catch (error) {
@@ -247,34 +245,38 @@ export default function CheckPage(): JSX.Element {
         </div>
       </div>
 
-      <div className='tasks-grid'>
-        {tasks.length === 0 ? (
-          <div className='empty-state'>
-            <div className='empty-content'>
-              <h3>还没有打卡项</h3>
-              <p>点击上方&quot;新增打卡项&quot;按钮创建你的第一个打卡项吧</p>
+      {isLoading ? (
+        <Spin />
+      ) : (
+        <div className='tasks-grid'>
+          {tasks.length === 0 ? (
+            <div className='empty-state'>
+              <div className='empty-content'>
+                <h3>还没有打卡项</h3>
+                <p>点击上方&quot;新增打卡项&quot;按钮创建你的第一个打卡项吧</p>
+              </div>
             </div>
-          </div>
-        ) : (
-          tasks.map(task => (
-            <CheckTaskCard
-              key={task.id}
-              task={task}
-              isManageMode={isManageMode}
-              onCheckIn={handleCheckIn}
-              onResetCheckIn={handleResetCheckIn}
-              onEditTask={handleEditTask}
-              onDeleteTask={handleDeleteTask}
-            />
-          ))
-        )}
-      </div>
+          ) : (
+            tasks.map(task => (
+              <CheckTaskCard
+                key={task.id}
+                task={task}
+                isManageMode={isManageMode}
+                onCheckIn={handleCheckIn}
+                onResetCheckIn={handleResetCheckIn}
+                onEditTask={handleEditTask}
+                onDeleteTask={handleDeleteTask}
+              />
+            ))
+          )}
+        </div>
+      )}
 
       {/* 新增/编辑打卡项弹窗 */}
       <Modal
         title={editingTask ? '编辑打卡项' : '新增打卡项'}
         open={isModalOpen}
-        onOk={handleUpdateCheckItem}
+        onOk={handleUpdateOrAddCheckItem}
         onCancel={handleCancel}
         okText={editingTask ? '保存' : '创建'}
         cancelText='取消'

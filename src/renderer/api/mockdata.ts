@@ -1,5 +1,6 @@
 import { TodoItem } from '@/api/TODOList/types';
 import { Note } from '@/api/Note/types';
+import { CheckInTask } from './CheckIn/type';
 // 模拟数据存储
 
 /**
@@ -91,5 +92,57 @@ export const mockNotes: Note[] = [
       '1. 完成项目文档\n2. 准备明天的会议\n3. 回复重要邮件\n4. 整理桌面文件',
     createdAt: '2024-01-16',
     updatedAt: '2024-01-16',
+  },
+];
+
+export const mockCheckInTask: CheckInTask[] = [
+  {
+    id: '1',
+    title: '晚上节食',
+    description: '健康、节制，比前一天的自己更好',
+    isCheckedIn: false,
+    streak: 7,
+    progress: 70,
+  },
+  {
+    id: '2',
+    title: '好好睡觉',
+    description: 'Go healthy, just sleep',
+    isCheckedIn: true,
+    checkedInAt: new Date().toLocaleString(),
+    streak: 12,
+    progress: 100,
+  },
+  {
+    id: '3',
+    title: '技术学习',
+    description: '学习技术，争取35不改咯',
+    isCheckedIn: false,
+    streak: 3,
+    progress: 25,
+  },
+  {
+    id: '4',
+    title: '步数10000+',
+    description: '保持活动',
+    isCheckedIn: false,
+    streak: 5,
+    progress: 45,
+  },
+  {
+    id: '5',
+    title: '学习强国',
+    description: '每日学习任务',
+    isCheckedIn: false,
+    streak: 15,
+    progress: 80,
+  },
+  {
+    id: '6',
+    title: '体重记录',
+    description: '记录体重变化',
+    isCheckedIn: false,
+    streak: 2,
+    progress: 15,
   },
 ];
