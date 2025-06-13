@@ -1,6 +1,7 @@
 import { TodoItem } from '@/api/TODOList/types';
 import { Note } from '@/api/Note/types';
 import { CheckInTask } from './CheckIn/type';
+import { PlanTask } from './PlanTask/type';
 // 模拟数据存储
 
 /**
@@ -76,6 +77,9 @@ export const mockTodos: TodoItem[] = [
   },
 ];
 
+/**
+ * 笔记本数据
+ */
 export const mockNotes: Note[] = [
   {
     id: '1',
@@ -95,6 +99,9 @@ export const mockNotes: Note[] = [
   },
 ];
 
+/**
+ * 打卡数据
+ */
 export const mockCheckInTask: CheckInTask[] = [
   {
     id: '1',
@@ -102,7 +109,6 @@ export const mockCheckInTask: CheckInTask[] = [
     description: '健康、节制，比前一天的自己更好',
     isCheckedIn: false,
     streak: 7,
-    progress: 70,
   },
   {
     id: '2',
@@ -111,7 +117,6 @@ export const mockCheckInTask: CheckInTask[] = [
     isCheckedIn: true,
     checkedInAt: new Date().toLocaleString(),
     streak: 12,
-    progress: 100,
   },
   {
     id: '3',
@@ -119,7 +124,6 @@ export const mockCheckInTask: CheckInTask[] = [
     description: '学习技术，争取35不改咯',
     isCheckedIn: false,
     streak: 3,
-    progress: 25,
   },
   {
     id: '4',
@@ -127,7 +131,6 @@ export const mockCheckInTask: CheckInTask[] = [
     description: '保持活动',
     isCheckedIn: false,
     streak: 5,
-    progress: 45,
   },
   {
     id: '5',
@@ -135,7 +138,6 @@ export const mockCheckInTask: CheckInTask[] = [
     description: '每日学习任务',
     isCheckedIn: false,
     streak: 15,
-    progress: 80,
   },
   {
     id: '6',
@@ -143,6 +145,165 @@ export const mockCheckInTask: CheckInTask[] = [
     description: '记录体重变化',
     isCheckedIn: false,
     streak: 2,
-    progress: 15,
+  },
+];
+
+/**
+ * 计划数据
+ */
+export const mockSampleTasks: PlanTask[] = [
+  {
+    id: '1',
+    title: '原理学习与源码解读',
+    description: '当前阶段: React',
+    nodes: [
+      {
+        id: '1-1',
+        title: 'React 基础概念学习',
+        completed: true,
+        createdAt: '2024-01-01',
+        status: 'completed',
+      },
+      {
+        id: '1-2',
+        title: 'React Hooks 深入理解',
+        completed: true,
+        createdAt: '2024-01-02',
+        status: 'completed',
+      },
+      {
+        id: '1-3',
+        title: 'React 源码分析',
+        completed: false,
+        createdAt: '2024-01-03',
+        status: 'in-progress',
+      },
+      {
+        id: '1-4',
+        title: 'React 性能优化',
+        completed: false,
+        createdAt: '2024-01-04',
+        status: 'pending',
+      },
+      {
+        id: '1-5',
+        title: 'React 18 新特性',
+        completed: false,
+        createdAt: '2024-01-05',
+        status: 'pending',
+      },
+    ],
+    createdAt: '2024-01-01',
+    updatedAt: '2024-01-03',
+  },
+  {
+    id: '2',
+    title: 'NPIMS',
+    description: '当前阶段: 暂无进行中',
+    nodes: [
+      {
+        id: '2-1',
+        title: '需求分析',
+        completed: true,
+        createdAt: '2024-01-01',
+        status: 'completed',
+      },
+      {
+        id: '2-2',
+        title: '系统设计',
+        completed: true,
+        createdAt: '2024-01-02',
+        status: 'completed',
+      },
+      {
+        id: '2-3',
+        title: '前端开发',
+        completed: true,
+        createdAt: '2024-01-03',
+        status: 'completed',
+      },
+      {
+        id: '2-4',
+        title: '后端开发',
+        completed: true,
+        createdAt: '2024-01-04',
+        status: 'completed',
+      },
+      {
+        id: '2-5',
+        title: '测试部署',
+        completed: true,
+        createdAt: '2024-01-05',
+        status: 'completed',
+      },
+      {
+        id: '2-6',
+        title: '性能优化',
+        completed: true,
+        createdAt: '2024-01-06',
+        status: 'completed',
+      },
+      {
+        id: '2-7',
+        title: '文档编写',
+        completed: false,
+        createdAt: '2024-01-07',
+        status: 'in-progress',
+      },
+      {
+        id: '2-8',
+        title: '维护更新',
+        completed: false,
+        createdAt: '2024-01-08',
+        status: 'pending',
+      },
+    ],
+    createdAt: '2024-01-01',
+    updatedAt: '2024-01-07',
+  },
+  {
+    id: '3',
+    title: '一些在等的时间点',
+    description: '当前阶段: 5.23 史前星球 名...',
+    nodes: [
+      {
+        id: '3-1',
+        title: '准备阶段规划',
+        completed: true,
+        createdAt: '2024-01-01',
+        status: 'completed',
+      },
+      {
+        id: '3-2',
+        title: '时间点确认',
+        completed: true,
+        createdAt: '2024-01-02',
+        status: 'completed',
+      },
+      {
+        id: '3-3',
+        title: '资源准备',
+        completed: false,
+        createdAt: '2024-01-03',
+        status: 'in-progress',
+      },
+      {
+        id: '3-4',
+        title: '执行计划',
+        completed: false,
+        createdAt: '2024-01-04',
+        status: 'pending',
+      },
+    ],
+    createdAt: '2024-01-01',
+    updatedAt: '2024-01-03',
+  },
+  {
+    id: '4',
+    title: '555',
+    description: '当前阶段: 暂无进行中',
+    nodes: [],
+    createdAt: '2024-01-01',
+    updatedAt: '2024-01-01',
   },
 ];

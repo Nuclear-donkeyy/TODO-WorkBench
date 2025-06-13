@@ -1,19 +1,9 @@
 import React from 'react';
 import { Button, Progress } from 'antd';
 import { EllipsisOutlined, DeleteOutlined } from '@ant-design/icons';
-import { TaskNode } from '@/renderer/components/TaskNode';
 import TaskNodesSection from '@/renderer/components/TaskNodesSection';
 import './index.less';
-
-// 计划任务接口
-export interface PlanTask {
-  id: string;
-  title: string;
-  description?: string;
-  nodes: TaskNode[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { PlanTask, TaskNode } from '@/renderer/api/PlanTask/type';
 
 interface PlanTaskCardProps {
   task: PlanTask;

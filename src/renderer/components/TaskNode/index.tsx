@@ -2,17 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import './index.less';
-
-// 任务节点接口
-export interface TaskNode {
-  id: string;
-  title: string;
-  completed: boolean;
-  createdAt: string;
-  plannedStartTime?: string;
-  plannedEndTime?: string;
-  status: 'pending' | 'in-progress' | 'completed';
-}
+import { TaskNode } from '@/renderer/api/PlanTask/type';
 
 interface TaskNodeProps {
   node: TaskNode;
