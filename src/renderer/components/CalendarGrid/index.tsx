@@ -11,10 +11,14 @@ interface CalendarGridProps {
   onDateClick: (date: string) => void;
 }
 
+interface Date2TodoMap {
+  [key: string]: TodoItem[];
+}
+
 export default function CalendarGrid(props: CalendarGridProps): JSX.Element {
   const { currentDate, onDateClick } = props;
   const [loading, setLoading] = useState<boolean>(true);
-  const [date2todoMap, setDate2todoMap] = useState<any>({});
+  const [date2todoMap, setDate2todoMap] = useState<Date2TodoMap>({});
   const [calendarDays, setCalendarDays] = useState<string[]>([]);
   const startOfMonth = currentDate.startOf('month');
   const endOfMonth = currentDate.endOf('month');
@@ -45,7 +49,7 @@ export default function CalendarGrid(props: CalendarGridProps): JSX.Element {
     const response = await API.calendar.getAllTodosByMonth(
       currentDate.format('YYYY-MM-DD').slice(0, 7)
     );
-    const _date2todoMap: { [key: string]: TodoItem[] } = {};
+    const _date2todoMap: Date2TodoMap = {};
     if (response.success && response.data) {
       response.data.forEach(item => {
         if (item.endDate) {

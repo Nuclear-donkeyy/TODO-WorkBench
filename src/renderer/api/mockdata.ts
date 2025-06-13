@@ -1,6 +1,10 @@
-import { TodoItem } from './TODOList/types';
-
+import { TodoItem } from '@/api/TODOList/types';
+import { Note } from '@/api/Note/types';
 // 模拟数据存储
+
+/**
+ * 代办项数据
+ */
 export const mockTodos: TodoItem[] = [
   {
     id: '1',
@@ -68,5 +72,24 @@ export const mockTodos: TodoItem[] = [
     completed: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+  },
+];
+
+export const mockNotes: Note[] = [
+  {
+    id: '1',
+    title: '我的第一篇笔记',
+    content:
+      '这是一篇示例笔记，你可以在这里记录你的想法和灵感。\n\n支持多行编辑，可以记录详细的内容。',
+    createdAt: '2024-01-15',
+    updatedAt: '2024-01-15',
+  },
+  {
+    id: '2',
+    title: '今日待办',
+    content:
+      '1. 完成项目文档\n2. 准备明天的会议\n3. 回复重要邮件\n4. 整理桌面文件',
+    createdAt: '2024-01-16',
+    updatedAt: '2024-01-16',
   },
 ];
