@@ -136,20 +136,7 @@ export default function CheckPage(): JSX.Element {
         };
         const response = await API.checkIn.updateCheckInTaskParam(param);
         if (response.success) {
-          setTasks(
-            (
-              prevTasks //视图数据更新
-            ) =>
-              prevTasks.map(task =>
-                task.id === editingTask.id
-                  ? {
-                      ...task,
-                      title: param.title,
-                      description: param.description || '',
-                    }
-                  : task
-              )
-          );
+          fetchCheckInTasks();
           message.success('打卡项更新成功！');
         } else {
           message.error('打卡项信息更新失败');
@@ -164,14 +151,7 @@ export default function CheckPage(): JSX.Element {
         };
         const response = await API.checkIn.addCheckInTaskParam(param);
         if (response.success) {
-          const newTask: CheckInTask = {
-            id: param.id,
-            title: param.title,
-            description: param.description,
-            isCheckedIn: param.isCheckIn,
-            streak: param.streak,
-          };
-          setTasks(prevTasks => [...prevTasks, newTask]);
+          fetchCheckInTasks();
           message.success('新建打卡项成功！');
         } else {
           message.error('新建打卡项失败');

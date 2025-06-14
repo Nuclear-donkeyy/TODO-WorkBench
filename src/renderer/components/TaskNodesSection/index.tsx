@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Input, Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-import { TaskNode as TaskNodeType } from '../TaskNode';
 import './index.less';
+import { TaskNode } from '@/renderer/api/PlanTask/type';
 
 interface TaskNodesSectionProps {
-  nodes: TaskNodeType[];
+  nodes: TaskNode[];
   onAddNode: (title: string) => void;
   onToggleNodeComplete: (nodeId: string) => void;
   onDeleteNode: (nodeId: string) => void;

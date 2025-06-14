@@ -1,16 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button, Input, Modal, message } from 'antd';
+import type { InputRef } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import './index.less';
-import { PlanTask, TaskNode } from '@/renderer/api/PlanTask/type';
+import { addNewPlanTaskParam, PlanTask } from '@/renderer/api/PlanTask/type';
 import PlanTaskCard from '@/renderer/components/PlanTaskCard';
 import API from '@/renderer/api';
 
 export default function PlanningPage(): JSX.Element {
   const [tasks, setTasks] = useState<PlanTask[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [newTaskTitle, setNewTaskTitle] = useState('');
   const [expandedTask, setExpandedTask] = useState<string | null>(null);
+  const inputRef = useRef<InputRef>(null);
 
   const fetchPlanTask = async (): Promise<void> => {
     const response = await API.planTask.getAllPlanTask();
@@ -18,41 +19,31 @@ export default function PlanningPage(): JSX.Element {
       setTasks(response.data);
     }
   };
-
-  // 初始化示例数据
   useEffect(() => {
     fetchPlanTask();
   }, []);
 
-  // 计算任务进度
-  const calculateProgress = (
-    nodes: TaskNode[]
-  ): { completed: number; total: number; percentage: number } => {
-    const completed = nodes.filter(node => node.completed).length;
-    const total = nodes.length;
-    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-    return { completed, total, percentage };
-  };
-
   // 创建新任务
-  const handleCreateTask = (): void => {
-    if (!newTaskTitle.trim()) {
+  const handleCreateTask = async (): Promise<void> => {
+    const inputValue = inputRef.current?.input?.value;
+    if (!inputValue || !inputValue.trim()) {
       message.error('请输入任务标题');
       return;
     }
 
-    const newTask: PlanTask = {
+    const param: addNewPlanTaskParam = {
       id: Date.now().toString(),
-      title: newTaskTitle,
+      title: inputValue.trim(),
       nodes: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-
-    setTasks(prev => [...prev, newTask]);
-    setNewTaskTitle('');
-    setIsModalVisible(false);
-    message.success('任务创建成功');
+    const response = await API.planTask.addNewPlanTask(param);
+    if (response.success) {
+      fetchPlanTask();
+      setIsModalVisible(false);
+      message.success('任务创建成功');
+    }
   };
 
   // 删除任务
@@ -66,79 +57,10 @@ export default function PlanningPage(): JSX.Element {
     setExpandedTask(prev => (prev === taskId ? null : taskId));
   };
 
-  // 添加任务节点
-  const handleAddNode = (taskId: string, title: string): void => {
-    if (!title.trim()) {
-      message.error('请输入节点标题');
-      return;
-    }
-
-    const newNode: TaskNode = {
-      id: `${taskId}-${Date.now()}`,
-      title: title.trim(),
-      completed: false,
-      createdAt: new Date().toISOString(),
-      status: 'pending',
-    };
-
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId
-          ? {
-              ...task,
-              nodes: [...task.nodes, newNode],
-              updatedAt: new Date().toISOString(),
-            }
-          : task
-      )
-    );
-
-    message.success('节点添加成功');
-  };
-
-  // 切换节点完成状态
-  const toggleNodeComplete = (taskId: string, nodeId: string): void => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId
-          ? {
-              ...task,
-              nodes: task.nodes.map(node =>
-                node.id === nodeId
-                  ? {
-                      ...node,
-                      completed: !node.completed,
-                      status: !node.completed ? 'completed' : 'pending',
-                    }
-                  : node
-              ),
-              updatedAt: new Date().toISOString(),
-            }
-          : task
-      )
-    );
-  };
-
-  // 删除节点
-  const handleDeleteNode = (taskId: string, nodeId: string): void => {
-    setTasks(prev =>
-      prev.map(task =>
-        task.id === taskId
-          ? {
-              ...task,
-              nodes: task.nodes.filter(node => node.id !== nodeId),
-              updatedAt: new Date().toISOString(),
-            }
-          : task
-      )
-    );
-    message.success('节点删除成功');
-  };
-
   return (
     <div className='planning-page'>
       <div className='page-header'>
-        <h1>长期计划</h1>
+        <h1>计划</h1>
         <Button
           type='primary'
           icon={<PlusOutlined />}
@@ -156,10 +78,7 @@ export default function PlanningPage(): JSX.Element {
             isExpanded={expandedTask === task.id}
             onToggleExpansion={toggleTaskExpansion}
             onDeleteTask={handleDeleteTask}
-            onAddNode={handleAddNode}
-            onToggleNodeComplete={toggleNodeComplete}
-            onDeleteNode={handleDeleteNode}
-            calculateProgress={calculateProgress}
+            fetchTasks={fetchPlanTask}
           />
         ))}
       </div>
@@ -170,15 +89,13 @@ export default function PlanningPage(): JSX.Element {
         onOk={handleCreateTask}
         onCancel={() => {
           setIsModalVisible(false);
-          setNewTaskTitle('');
         }}
         okText='创建'
         cancelText='取消'
       >
         <Input
+          ref={inputRef}
           placeholder='请输入任务标题'
-          value={newTaskTitle}
-          onChange={e => setNewTaskTitle(e.target.value)}
           onPressEnter={handleCreateTask}
         />
       </Modal>
