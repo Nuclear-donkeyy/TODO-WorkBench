@@ -36,3 +36,7 @@ export interface DeleteNodeParam {
   taskId: string;
   nodeId: string;
 }
+
+export interface DeletePlanTaskParam {
+  taskId: string;
+}

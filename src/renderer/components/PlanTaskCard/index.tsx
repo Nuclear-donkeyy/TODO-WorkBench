@@ -127,26 +127,24 @@ export default function PlanTaskCard(props: PlanTaskCardProps): JSX.Element {
         </div>
       </div>
 
-      {isExpanded && (
-        <div className='task-details'>
-          <div className='progress-bar-container'>
-            <Progress
-              percent={progress.percentage}
-              strokeColor='var(--accent-color)'
-              trailColor='var(--surface-tertiary)'
-            />
-          </div>
-
-          <TaskNodesSection
-            nodes={task.nodes}
-            onAddNode={(title: string) => handleAddNode(task.id, title)}
-            onToggleNodeComplete={(nodeId: string) =>
-              toggleNodeComplete(task.id, nodeId)
-            }
-            onDeleteNode={(nodeId: string) => handleDeleteNode(task.id, nodeId)}
+      <div className={`task-details ${isExpanded ? 'expanded' : 'collapsed'}`}>
+        <div className='progress-bar-container'>
+          <Progress
+            percent={progress.percentage}
+            strokeColor='var(--accent-color)'
+            trailColor='var(--surface-tertiary)'
           />
         </div>
-      )}
+
+        <TaskNodesSection
+          nodes={task.nodes}
+          onAddNode={(title: string) => handleAddNode(task.id, title)}
+          onToggleNodeComplete={(nodeId: string) =>
+            toggleNodeComplete(task.id, nodeId)
+          }
+          onDeleteNode={(nodeId: string) => handleDeleteNode(task.id, nodeId)}
+        />
+      </div>
     </div>
   );
 }

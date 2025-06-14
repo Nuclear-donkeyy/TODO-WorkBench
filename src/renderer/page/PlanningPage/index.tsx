@@ -3,7 +3,11 @@ import { Button, Input, Modal, message } from 'antd';
 import type { InputRef } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import './index.less';
-import { addNewPlanTaskParam, PlanTask } from '@/renderer/api/PlanTask/type';
+import {
+  addNewPlanTaskParam,
+  DeletePlanTaskParam,
+  PlanTask,
+} from '@/renderer/api/PlanTask/type';
 import PlanTaskCard from '@/renderer/components/PlanTaskCard';
 import API from '@/renderer/api';
 
@@ -47,9 +51,17 @@ export default function PlanningPage(): JSX.Element {
   };
 
   // 删除任务
-  const handleDeleteTask = (taskId: string): void => {
-    setTasks(prev => prev.filter(task => task.id !== taskId));
-    message.success('任务删除成功');
+  const handleDeleteTask = async (taskId: string): Promise<void> => {
+    const param: DeletePlanTaskParam = {
+      taskId,
+    };
+    const response = await API.planTask.deletePlanTask(param);
+    if (response.success) {
+      fetchPlanTask();
+      message.success('任务删除成功');
+    } else {
+      message.error('任务删除失败: ' + response.message);
+    }
   };
 
   // 展开/折叠任务详情

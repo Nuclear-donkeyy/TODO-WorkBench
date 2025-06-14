@@ -5,19 +5,29 @@ import {
   addNewPlanNodeParam,
   addNewPlanTaskParam,
   DeleteNodeParam,
+  DeletePlanTaskParam,
   PlanTask,
   toggleNodeCompleteParam,
 } from './type';
 
+/**
+ * 获取所有计划
+ */
 export const getAllPlanTask = async (): Promise<ApiResponse<PlanTask[]>> => {
   await delay();
-  const data = mockSampleTasks;
+  // 深拷贝确保React能检测到状态变化
+  const data = JSON.parse(JSON.stringify(mockSampleTasks));
   return {
     success: true,
     data: data,
   };
 };
 
+/**
+ * 新增任务
+ * @param param
+ * @returns
+ */
 export const addNewPlanTask = async (
   param: addNewPlanTaskParam
 ): Promise<ApiResponse<void>> => {
@@ -30,7 +40,11 @@ export const addNewPlanTask = async (
     success: true,
   };
 };
-
+/**
+ * 新增任务节点
+ * @param param
+ * @returns
+ */
 export const addNewPlanNode = async (
   param: addNewPlanNodeParam
 ): Promise<ApiResponse<void>> => {
@@ -42,7 +56,10 @@ export const addNewPlanNode = async (
       success: false,
     };
   }
-  if (task.nodes.length === 0) {
+  if (
+    task.nodes.length === 0 ||
+    task.nodes[task.nodes.length - 1].status === 'completed'
+  ) {
     param.newNode.status = 'in-progress';
   }
   task.nodes.push(param.newNode);
@@ -63,6 +80,7 @@ export const toggleNodeComplete = async (
   if (!node || nodeIndex === undefined) {
     return { success: false, message: '找不到该任务节点' };
   }
+
   if (node.status === 'in-progress') {
     if (nodeIndex !== 0 && task.nodes[nodeIndex - 1].status !== 'completed') {
       return { success: false, message: '只能更新第一个进行中节点' };
@@ -94,10 +112,24 @@ export const deleteTaskNode = async (
     return { success: false, message: '找不到该任务' };
   }
   const nodeIndex = task.nodes.findIndex(node => node.id === param.nodeId);
-  if (!nodeIndex) {
+  if (nodeIndex === -1) {
     return { success: false, message: '找不到该任务节点' };
   }
   task.nodes.splice(nodeIndex, 1);
+  return {
+    success: true,
+  };
+};
+
+export const deletePlanTask = async (
+  param: DeletePlanTaskParam
+): Promise<ApiResponse<void>> => {
+  await delay();
+  const taskIndex = mockSampleTasks.findIndex(task => task.id === param.taskId);
+  if (taskIndex === -1) {
+    return { success: false, message: '找不到该任务' };
+  }
+  mockSampleTasks.splice(taskIndex, 1);
   return {
     success: true,
   };

@@ -16,7 +16,6 @@
   }
 
   &.expanded {
-    cursor: default;
     box-shadow: @box-shadow-md-light-scheme;
     border-color: var(--accent-color);
   }
@@ -97,9 +96,24 @@
   }
 
   .task-details {
+    overflow: auto;
     background-color: var(--surface-secondary);
     border-top: 1px solid var(--border-light);
-    padding: 24px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.collapsed {
+      max-height: 0;
+      padding: 0 24px;
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    &.expanded {
+      max-height: 1000px; // 足够大的值来容纳内容
+      padding: 24px;
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     .progress-bar-container {
       margin-bottom: 24px;

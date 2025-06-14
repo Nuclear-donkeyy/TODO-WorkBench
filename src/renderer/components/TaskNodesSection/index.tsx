@@ -119,6 +119,12 @@ export default function TaskNodesSection(
                           checked={node.completed}
                           onChange={() => onToggleNodeComplete(node.id)}
                           className='node-checkbox'
+                          disabled={node.status === 'pending'}
+                          style={
+                            node.status === 'pending'
+                              ? { cursor: 'not-allowed' }
+                              : {}
+                          }
                         />
                         <span
                           className={`node-title ${node.completed ? 'completed' : ''}`}
