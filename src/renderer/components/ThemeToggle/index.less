@@ -1,0 +1,162 @@
+@import '../../design-system/styles/tokens.less';
+
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border-radius: var(--border-radius-full);
+
+  cursor: pointer;
+  transition: all var(--transition-normal);
+
+  font-family: var(--font-family-sans);
+  font-weight: var(--font-weight-medium);
+
+  outline: none;
+
+  &:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-50);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  // 尺寸变体
+  &--sm {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    min-height: 32px;
+
+    .theme-toggle__icon svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &--md {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-base);
+    min-height: 40px;
+
+    .theme-toggle__icon svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &--lg {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-lg);
+    min-height: 48px;
+
+    .theme-toggle__icon svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    svg {
+      transition: all var(--transition-fast);
+      color: currentColor;
+    }
+
+    // 主题切换动画
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: var(--border-radius-full);
+      background: var(--color-primary);
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all var(--transition-fast);
+      z-index: -1;
+    }
+  }
+
+  &__label {
+    white-space: nowrap;
+    transition: opacity var(--transition-fast);
+  }
+
+  // 动画效果
+  &:hover .theme-toggle__icon {
+    &::before {
+      opacity: 0.1;
+      transform: scale(1);
+    }
+
+    svg {
+      transform: rotate(15deg);
+    }
+  }
+
+  // 暗色主题特定样式
+  [data-theme='dark'] & {
+    &:hover {
+      background: var(--color-neutral-200);
+    }
+  }
+}
+
+// 图标旋转动画
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 点击时的涟漪效果
+.theme-toggle {
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: var(--color-primary);
+    opacity: 0.3;
+    transform: translate(-50%, -50%);
+    transition:
+      width 0.6s,
+      height 0.6s;
+  }
+
+  &:active::after {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+    transition:
+      width 0.3s,
+      height 0.3s,
+      opacity 0.6s;
+  }
+}

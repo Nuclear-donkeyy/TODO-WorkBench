@@ -7,6 +7,7 @@ import {
   Content,
 } from '../design-system/components/Layout/Layout';
 import MenuItem, { type MenuItemProp } from '../components/MenuItem';
+import ThemeToggle from '../components/ThemeToggle';
 import useWindowSize from '../hooks/useWindowSize';
 
 export default function App(): JSX.Element {
@@ -122,6 +123,10 @@ export default function App(): JSX.Element {
             );
           })}
         </nav>
+
+        <div className='app-sidebar__footer'>
+          <ThemeToggle size='sm' showLabel />
+        </div>
       </Sidebar>
 
       <Content padding='lg' className='app-content'>
