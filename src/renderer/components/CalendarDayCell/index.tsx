@@ -17,8 +17,7 @@ export default function CalendarDayCell(
 ): JSX.Element {
   const { date, isCurrentMonth, isToday, todos, onClick } = props;
   const dayNumber = dayjs(date).date();
-  const maxVisibleTodos = 2;
-  const remainingCount = todos.length - maxVisibleTodos;
+  const maxVisibleTodos = 1;
 
   return (
     <div
@@ -34,10 +33,6 @@ export default function CalendarDayCell(
         {todos.slice(0, maxVisibleTodos).map(todo => (
           <TodoItemCard key={todo.id} todo={todo} compact={true} />
         ))}
-
-        {remainingCount > 0 && (
-          <div className='more-todos'>+{remainingCount} 更多</div>
-        )}
       </div>
     </div>
   );

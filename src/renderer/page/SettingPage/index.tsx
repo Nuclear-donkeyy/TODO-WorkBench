@@ -5,7 +5,7 @@ import './index.less';
 export default function SettingPage(): JSX.Element {
   const { theme: currentTheme, setTheme, themes } = useTheme();
 
-  const handleThemeChange = (theme: ThemeType) => {
+  const handleThemeChange = (theme: ThemeType): void => {
     setTheme(theme);
   };
 

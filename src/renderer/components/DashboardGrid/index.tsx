@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
 import './index.less';
 
@@ -50,6 +50,74 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
     Map<string, Layout>
   >(new Map());
   const [affectedItems, setAffectedItems] = useState<Set<string>>(new Set());
+
+  // 从items生成layouts
+  const generateLayouts = useCallback(() => {
+    const layoutsObject: any = {};
+
+    Object.keys(breakpoints).forEach(breakpoint => {
+      const maxCols = cols[breakpoint as keyof typeof cols] || 4;
+      const adjustedItems: Layout[] = [];
+
+      // 先按原始 y 坐标排序，保持卡片的相对顺序
+      const sortedItems = [...items].sort((a, b) => a.y - b.y || a.x - b.x);
+
+      // 对每个断点重新计算布局
+      sortedItems.forEach(item => {
+        const adjustedW = Math.min(item.w, maxCols); // 确保宽度不超过最大列数
+
+        // 尝试保持原始位置，但需要调整以适应新的列数
+        let targetX = Math.min(item.x, maxCols - adjustedW);
+        if (targetX < 0) targetX = 0;
+
+        // 查找最佳位置
+        const bestPosition = findBestPosition(
+          adjustedItems,
+          {
+            w: adjustedW,
+            h: item.h,
+            preferredX: targetX,
+            preferredY: item.y,
+          },
+          maxCols
+        );
+
+        adjustedItems.push({
+          i: item.i,
+          x: bestPosition.x,
+          y: bestPosition.y,
+          w: adjustedW,
+          h: item.h,
+          minW: item.minW ? Math.min(item.minW, maxCols) : undefined,
+          minH: item.minH,
+          maxW: item.maxW ? Math.min(item.maxW, maxCols) : undefined,
+          maxH: item.maxH,
+        });
+      });
+
+      layoutsObject[breakpoint] = adjustedItems;
+    });
+
+    return layoutsObject;
+  }, [items, breakpoints, cols]);
+
+  // 监听窗口大小变化，重新生成布局
+  useEffect(() => {
+    const handleResize = () => {
+      const newLayouts = generateLayouts();
+      setLayouts(newLayouts);
+    };
+
+    // 初始化布局
+    handleResize();
+
+    // 添加窗口大小变化监听器
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [generateLayouts]); // 当 generateLayouts 变化时重新生成布局
 
   const handleLayoutChange = useCallback(
     (layout: Layout[], allLayouts: any) => {
@@ -255,26 +323,90 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
     return null;
   };
 
-  // 从items生成layouts
-  const generateLayouts = () => {
-    const layoutsObject: any = {};
+  // Helper function to check collision between two layout items
+  const isCollidingItems = useCallback(
+    (
+      item1: { x: number; y: number; w: number; h: number },
+      item2: Layout
+    ): boolean => {
+      return !(
+        item1.x + item1.w <= item2.x ||
+        item2.x + item2.w <= item1.x ||
+        item1.y + item1.h <= item2.y ||
+        item2.y + item2.h <= item1.y
+      );
+    },
+    []
+  );
 
-    Object.keys(breakpoints).forEach(breakpoint => {
-      layoutsObject[breakpoint] = items.map(item => ({
-        i: item.i,
-        x: item.x,
-        y: item.y,
-        w: item.w,
-        h: item.h,
-        minW: item.minW,
-        minH: item.minH,
-        maxW: item.maxW,
-        maxH: item.maxH,
-      }));
-    });
+  // 检查位置是否被占用（专门用于Layout数组）
+  const isPositionOccupiedInItems = useCallback(
+    (items: Layout[], x: number, y: number, w: number, h: number): boolean => {
+      return items.some(item => {
+        return isCollidingItems({ x, y, w, h }, item);
+      });
+    },
+    [isCollidingItems]
+  );
 
-    return layoutsObject;
-  };
+  // 查找最佳位置的算法
+  const findBestPosition = useCallback(
+    (
+      existingItems: Layout[],
+      itemToPlace: {
+        w: number;
+        h: number;
+        preferredX: number;
+        preferredY: number;
+      },
+      maxCols: number
+    ): { x: number; y: number } => {
+      const { w, h, preferredX, preferredY } = itemToPlace;
+
+      // 首先尝试首选位置
+      if (
+        !isPositionOccupiedInItems(existingItems, preferredX, preferredY, w, h)
+      ) {
+        return { x: preferredX, y: preferredY };
+      }
+
+      // 如果首选位置不可用，寻找最近的可用位置
+      // 优先尝试同一行的其他位置
+      for (let x = 0; x <= maxCols - w; x++) {
+        if (!isPositionOccupiedInItems(existingItems, x, preferredY, w, h)) {
+          return { x, y: preferredY };
+        }
+      }
+
+      // 如果同一行没有空间，寻找下面的行
+      for (let y = preferredY + 1; y < preferredY + 20; y++) {
+        // 限制搜索范围
+        for (let x = 0; x <= maxCols - w; x++) {
+          if (!isPositionOccupiedInItems(existingItems, x, y, w, h)) {
+            return { x, y };
+          }
+        }
+      }
+
+      // 如果还是找不到，尝试上面的行
+      for (let y = Math.max(0, preferredY - 1); y >= 0; y--) {
+        for (let x = 0; x <= maxCols - w; x++) {
+          if (!isPositionOccupiedInItems(existingItems, x, y, w, h)) {
+            return { x, y };
+          }
+        }
+      }
+
+      // 最后的兜底方案：找到最下方的空位置
+      let maxY = 0;
+      existingItems.forEach(item => {
+        maxY = Math.max(maxY, item.y + item.h);
+      });
+
+      return { x: 0, y: maxY };
+    },
+    [isPositionOccupiedInItems]
+  );
 
   return (
     <div className='dashboard-grid'>
