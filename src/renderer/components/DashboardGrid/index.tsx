@@ -103,15 +103,13 @@ export default function DashboardGrid(props: DashboardGridProps): JSX.Element {
 
   // 监听窗口大小变化，重新生成布局
   useEffect(() => {
-    const handleResize = () => {
+    const handleResize = (): void => {
       const newLayouts = generateLayouts();
       setLayouts(newLayouts);
     };
 
-    // 初始化布局
     handleResize();
 
-    // 添加窗口大小变化监听器
     window.addEventListener('resize', handleResize);
 
     return () => {

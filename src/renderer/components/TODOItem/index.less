@@ -7,7 +7,7 @@
   z-index: 0;
   min-height: 68px;
   margin: 0 0 16px 0;
-  background: var(--surface-primary);
+  background: var(--color-surface-elevated);
   overflow: hidden;
   transition: all 0.4s;
   cursor: pointer;
@@ -15,7 +15,6 @@
   border: 2px solid transparent;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   position: relative;
-
   &::before {
     content: '';
     position: absolute;
@@ -36,7 +35,7 @@
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    border-color: rgba(102, 126, 234, 0.3);
+    border-color: #667eea;
 
     &::before {
       opacity: 1;
@@ -58,12 +57,12 @@
       gap: 8px;
       padding-right: 16px;
       min-width: 0;
-
+      color: var(--color-text-primary);
       .content-text {
         font-size: 16px;
         font-weight: 500;
         line-height: 1.4;
-        color: var(--text-primary);
+        color: var(--color-text-primary);
         transition: all 0.3s ease;
         word-wrap: break-word;
         overflow-wrap: break-word;
@@ -79,7 +78,7 @@
       &.completed-text {
         .content-text {
           text-decoration: line-through;
-          color: var(--text-tertiary);
+          color: var(--color-text-tertiary);
           opacity: 0.7;
         }
       }
@@ -95,7 +94,7 @@
 
       .description {
         font-size: 13px;
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
         line-height: 1.3;
         opacity: 0.8;
         overflow: hidden;
@@ -106,8 +105,8 @@
 
       .date-range {
         font-size: 12px;
-        color: var(--text-tertiary);
-        background: var(--surface-tertiary);
+        color: var(--color-text-tertiary);
+        background-color: var(--color-surface);
         padding: 4px 8px;
         border-radius: 6px;
         font-weight: 500;
@@ -240,7 +239,6 @@
   // 编辑区域样式
   .edit-block {
     width: 100%;
-    background: var(--surface-secondary);
     overflow: auto;
     display: flex;
     flex-direction: column;
@@ -280,7 +278,7 @@
           margin-bottom: 4px;
 
           label {
-            color: var(--text-secondary);
+            color: var(--color-text-secondary);
             font-weight: 600;
           }
         }
@@ -301,7 +299,7 @@
         }
 
         .ant-input::placeholder {
-          color: var(--text-placeholder);
+          color: var(--color-text-placeholder);
           font-size: 13px;
         }
 
@@ -324,7 +322,7 @@
           &:not(.ant-btn-primary) {
             background: var(--surface-tertiary);
             border: 1px solid var(--border-medium);
-            color: var(--text-secondary);
+            color: var(--color-text-secondary);
 
             &:hover {
               background: var(--surface-primary);
@@ -338,7 +336,6 @@
 
   // 完成状态样式
   &.completed {
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
     border-color: rgba(82, 196, 26, 0.2);
 
     &::before {
@@ -356,12 +353,6 @@
     &:hover {
       border-color: rgba(82, 196, 26, 0.4);
       opacity: 1;
-    }
-  }
-
-  &.active {
-    &:hover {
-      border-color: #667eea;
     }
   }
 
