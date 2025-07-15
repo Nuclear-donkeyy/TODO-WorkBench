@@ -1,17 +1,20 @@
+// 公共过渡效果
+@transition-smooth: all 0.2s ease;
+
 .calendar-page {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background-color: #f8f9fa;
+  width: 100%;
+  background: var(--color-background);
   padding: 24px;
   box-sizing: border-box;
-  width: 100%;
   .calendar-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 24px;
-    background: white;
+    background: var(--color-surface);
     padding: 20px 24px;
     border-radius: 12px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
@@ -20,7 +23,7 @@
       margin: 0;
       font-size: 24px;
       font-weight: 600;
-      color: #1f2937;
+      color: var(--color-text-primary);
     }
 
     .date-selectors {
@@ -31,17 +34,17 @@
         border-radius: 8px;
 
         .ant-select-selector {
-          border: 1px solid #d1d5db;
+          border: 1px solid var(--color-border-light);
           border-radius: 8px;
-          transition: all 0.2s ease;
+          transition: @transition-smooth;
 
           &:hover {
-            border-color: #6366f1;
+            border-color: var(--color-primary);
           }
         }
 
         &.ant-select-focused .ant-select-selector {
-          border-color: #6366f1;
+          border-color: var(--color-primary);
           box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
       }
@@ -50,7 +53,7 @@
 
   .calendar-content {
     flex: 1;
-    background: white;
+    background: var(--color-surface);
     border-radius: 12px;
     padding: 24px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
@@ -61,17 +64,18 @@
 // 抽屉面板样式
 .day-detail-drawer {
   .ant-drawer-header {
-    background: var(--primary-color);
+    background: var(--color-primary);
     border-bottom: none;
 
     .ant-drawer-title {
-      color: white;
+      color: var(--color-text-inverse);
       font-size: 18px;
       font-weight: 600;
     }
 
     .ant-drawer-close {
-      color: white;
+      color: var(--color-text-inverse);
+      transition: @transition-smooth;
 
       &:hover {
         color: rgba(255, 255, 255, 0.8);
@@ -81,6 +85,6 @@
 
   .ant-drawer-body {
     padding: 0;
-    background-color: #f8f9fa;
+    background: var(--color-background);
   }
 }

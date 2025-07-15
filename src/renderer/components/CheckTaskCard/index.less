@@ -1,190 +1,167 @@
-@import url(../../variables.less);
+// 公共过渡效果和变量
+@transition-smooth: all 0.3s ease;
+@transition-fast: all 0.2s ease;
 
-// 任务卡片
 .check-task-card {
-  background: var(--surface-primary);
-  border: 1px solid var(--border-light);
-  border-radius: @border-radius-xl;
-  padding: @spacing-2xl;
-  transition: all @transition-normal;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  padding: 24px;
   position: relative;
   overflow: hidden;
-  box-shadow: @box-shadow-sm-light-scheme;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: @transition-smooth;
+  animation: slideInUp 0.6s ease-out;
 
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    inset: 0 0 auto 0;
     height: 4px;
-    background: var(--primary-color);
+    background: var(--color-primary);
     opacity: 0;
-    transition: opacity @transition-normal;
+    transition: opacity @transition-smooth;
   }
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: @box-shadow-md-light-scheme;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 
     &::before {
       opacity: 1;
     }
-
-    .task-operations {
-      .operation-buttons {
-        opacity: 1;
-      }
+    .task-operations .operation-buttons {
+      opacity: 1;
     }
   }
 
   &.manage-mode {
-    border-color: var(--primary-color);
+    border-color: var(--color-primary);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
 
-    .task-operations {
-      .operation-buttons {
-        opacity: 1 !important;
-      }
+    .task-operations .operation-buttons {
+      opacity: 1 !important;
     }
-
     .task-title {
-      color: var(--primary-color-dark);
+      color: var(--color-primary-dark);
     }
   }
 
   &.checked-in {
     background: linear-gradient(
       135deg,
-      var(--accent-color-soft),
-      var(--surface-primary)
+      rgba(0, 212, 170, 0.1),
+      var(--color-surface)
     );
-    border-color: var(--accent-color);
+    border-color: var(--color-accent);
 
     &::before {
       background: linear-gradient(
         90deg,
-        var(--accent-color),
-        var(--accent-color-light)
+        var(--color-accent),
+        var(--color-accent-light)
       );
       opacity: 1;
     }
 
     .task-title {
-      color: var(--accent-color-dark);
+      color: var(--color-accent-dark);
     }
   }
 
-  // 卡片头部
   .task-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: @spacing-lg;
+    margin-bottom: 16px;
 
     .task-info {
       display: flex;
       align-items: center;
-      gap: @spacing-sm;
+      gap: 8px;
 
-      .ant-badge {
-        .ant-badge-count {
-          border-radius: @border-radius-pill;
-          font-weight: 600;
-          min-width: 24px;
-          height: 20px;
-          line-height: 20px;
-          font-size: 11px;
-        }
+      .ant-badge .ant-badge-count {
+        border-radius: 20px;
+        font-weight: 600;
+        min-width: 24px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 11px;
       }
     }
 
     .task-operations {
       display: flex;
       align-items: center;
-      gap: @spacing-xs;
+      gap: 4px;
 
-      .check-status {
-        .check-icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 28px;
-          height: 28px;
-          background: var(--accent-color);
-          color: white;
-          border-radius: 50%;
-          font-size: 16px;
-          font-weight: bold;
-          box-shadow: 0 2px 8px rgba(0, 212, 170, 0.3);
-        }
+      .check-status .check-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background: var(--color-accent);
+        color: var(--color-text-inverse);
+        border-radius: 50%;
+        font-size: 16px;
+        font-weight: bold;
+        box-shadow: 0 2px 8px rgba(0, 212, 170, 0.3);
       }
 
       .operation-buttons {
         display: flex;
-        gap: @spacing-xs;
+        gap: 4px;
         opacity: 0;
-        transition: opacity @transition-normal;
+        transition: opacity @transition-smooth;
         z-index: 10;
         position: relative;
 
-        .edit-btn {
-          color: var(--text-secondary);
-          padding: @spacing-xs @spacing-sm;
-          border-radius: @border-radius-md;
+        .edit-btn,
+        .delete-btn {
+          color: var(--color-text-secondary);
+          padding: 4px 8px;
+          border-radius: 6px;
           border: 1px solid transparent;
-          transition: all @transition-normal;
-
-          &:hover {
-            color: var(--primary-color);
-            background: var(--primary-color-soft);
-            border-color: var(--primary-color);
-            transform: translateY(-1px);
-          }
+          transition: @transition-smooth;
 
           &:active {
             transform: translateY(0);
           }
         }
 
-        .delete-btn {
-          color: var(--text-secondary);
-          padding: @spacing-xs @spacing-sm;
-          border-radius: @border-radius-md;
-          border: 1px solid transparent;
-          transition: all @transition-normal;
+        .edit-btn:hover {
+          color: var(--color-primary);
+          background: rgba(102, 126, 234, 0.1);
+          border-color: var(--color-primary);
+          transform: translateY(-1px);
+        }
 
-          &:hover {
-            color: var(--danger-color);
-            background: var(--danger-soft);
-            border-color: var(--danger-color);
-            transform: translateY(-1px);
-          }
-
-          &:active {
-            transform: translateY(0);
-          }
+        .delete-btn:hover {
+          color: var(--color-error);
+          background: rgba(239, 68, 68, 0.1);
+          border-color: var(--color-error);
+          transform: translateY(-1px);
         }
       }
     }
   }
 
-  // 卡片内容
   .task-content {
-    margin-bottom: @spacing-xl;
+    margin-bottom: 20px;
 
     .task-title {
-      margin: 0 0 @spacing-sm 0;
-      color: var(--text-primary);
-      font-size: @font-size-large;
+      margin: 0 0 8px 0;
+      color: var(--color-text-primary);
+      font-size: 18px;
       font-weight: 600;
       line-height: 1.4;
     }
 
     .task-description {
-      margin: 0 0 @spacing-lg 0;
-      color: var(--text-secondary);
-      font-size: @font-size-base;
+      margin: 0 0 16px 0;
+      color: var(--color-text-secondary);
+      font-size: 16px;
       line-height: 1.5;
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -195,16 +172,16 @@
     .task-progress {
       display: flex;
       align-items: center;
-      gap: @spacing-sm;
-      margin-bottom: @spacing-md;
+      gap: 8px;
+      margin-bottom: 12px;
 
       .ant-progress {
         flex: 1;
       }
 
       .progress-text {
-        color: var(--text-tertiary);
-        font-size: @font-size-small;
+        color: var(--color-text-tertiary);
+        font-size: 13px;
         font-weight: 500;
         min-width: 40px;
         text-align: right;
@@ -212,46 +189,43 @@
     }
 
     .check-time {
-      margin-top: @spacing-md;
-      padding: @spacing-sm @spacing-md;
-      background: var(--surface-secondary);
-      border-radius: @border-radius-md;
-      border-left: 3px solid var(--accent-color);
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: var(--color-surface-elevated);
+      border-radius: 6px;
+      border-left: 3px solid var(--color-accent);
 
       span {
-        color: var(--text-tertiary);
-        font-size: @font-size-small;
+        color: var(--color-text-tertiary);
+        font-size: 13px;
         font-weight: 500;
       }
     }
   }
 
-  // 卡片操作按钮
   .task-actions {
     .check-btn {
       width: 100%;
       height: 44px;
       border: none;
-      border-radius: @border-radius-lg;
-      font-size: @font-size-base;
+      border-radius: 8px;
+      font-size: 16px;
       font-weight: 600;
-      transition: all @transition-normal;
       background: linear-gradient(
         135deg,
-        var(--primary-color),
-        var(--primary-color-dark)
+        var(--color-primary),
+        var(--color-primary-dark)
       );
       box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
       position: relative;
       overflow: hidden;
+      transition: @transition-smooth;
 
       &::before {
         content: '';
         position: absolute;
-        top: 0;
+        inset: 0;
         left: -100%;
-        width: 100%;
-        height: 100%;
         background: linear-gradient(
           90deg,
           transparent,
@@ -264,7 +238,6 @@
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
-
         &::before {
           left: 100%;
         }
@@ -278,43 +251,43 @@
     .checked-actions {
       display: flex;
       flex-direction: column;
-      gap: @spacing-sm;
+      gap: 8px;
 
       .checked-btn {
         width: 100%;
         height: 44px;
         background: linear-gradient(
           135deg,
-          var(--accent-color-soft),
-          var(--surface-secondary)
+          rgba(0, 212, 170, 0.1),
+          var(--color-surface-elevated)
         );
-        color: var(--accent-color-dark);
-        border: 2px solid var(--accent-color);
-        border-radius: @border-radius-lg;
-        font-size: @font-size-base;
+        color: var(--color-accent-dark);
+        border: 2px solid var(--color-accent);
+        border-radius: 8px;
+        font-size: 16px;
         font-weight: 600;
         cursor: not-allowed;
         position: relative;
 
         .anticon {
-          color: var(--accent-color);
+          color: var(--color-accent);
           font-weight: bold;
         }
       }
 
       .reset-btn {
-        color: var(--text-secondary);
-        font-size: @font-size-small;
+        color: var(--color-text-secondary);
+        font-size: 13px;
         height: 32px;
         align-self: center;
-        border: 1px solid var(--border-medium);
-        border-radius: @border-radius-md;
-        transition: all @transition-normal;
+        border: 1px solid var(--color-border-medium);
+        border-radius: 6px;
+        transition: @transition-smooth;
 
         &:hover {
-          color: var(--primary-color);
-          background: var(--primary-color-soft);
-          border-color: var(--primary-color);
+          color: var(--color-primary);
+          background: rgba(102, 126, 234, 0.1);
+          border-color: var(--color-primary);
           transform: translateY(-1px);
           box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
         }
@@ -325,12 +298,9 @@
       }
     }
   }
-
-  // 加载动画
-  animation: slideInUp 0.6s ease-out;
 }
 
-// 加载动画定义
+// 动画定义
 @keyframes slideInUp {
   from {
     opacity: 0;
@@ -345,12 +315,10 @@
 // 响应式优化
 @media (max-width: 480px) {
   .check-task-card {
-    padding: @spacing-lg;
+    padding: 16px;
 
-    .task-content {
-      .task-title {
-        font-size: @font-size-base;
-      }
+    .task-content .task-title {
+      font-size: 16px;
     }
   }
 }

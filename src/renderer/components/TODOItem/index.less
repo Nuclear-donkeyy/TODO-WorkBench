@@ -1,41 +1,45 @@
 @import url(https://at.alicdn.com/t/c/font_4943186_6ih1u1y49un.css);
-@import url(../../variables.less);
+
+// 公共过渡效果
+@transition-smooth: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+@transition-fast: all 0.3s ease;
+@transition-form:
+  height 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+  opacity 0.25s ease-in-out 0.05s,
+  padding 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
 
 .TODOItem-container {
   display: flex;
   flex-direction: column;
-  z-index: 0;
   min-height: 68px;
   margin: 0 0 16px 0;
   background: var(--color-surface-elevated);
-  overflow: hidden;
-  transition: all 0.4s;
-  cursor: pointer;
   border-radius: 12px;
   border: 2px solid transparent;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  overflow: hidden;
   position: relative;
+  transition: @transition-fast;
+
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: linear-gradient(
       135deg,
-      rgba(102, 126, 234, 0.05) 0%,
-      rgba(0, 212, 170, 0.05) 100%
+      rgba(102, 126, 234, 0.05),
+      rgba(0, 212, 170, 0.05)
     );
+    border-radius: 10px;
     opacity: 0;
     transition: opacity 0.3s ease;
-    border-radius: 10px;
   }
 
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    border-color: #667eea;
+    border-color: var(--color-primary);
 
     &::before {
       opacity: 1;
@@ -57,19 +61,19 @@
       gap: 8px;
       padding-right: 16px;
       min-width: 0;
-      color: var(--color-text-primary);
+
       .content-text {
         font-size: 16px;
         font-weight: 500;
         line-height: 1.4;
         color: var(--color-text-primary);
-        transition: all 0.3s ease;
+        transition: @transition-fast;
         word-wrap: break-word;
         overflow-wrap: break-word;
       }
 
       .completed-icon {
-        color: #52c41a;
+        color: var(--color-success);
         font-size: 18px;
         animation: bounceIn 0.5s ease-out;
         flex-shrink: 0;
@@ -87,8 +91,7 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
-      margin-left: auto;
-      margin-right: 16px;
+      margin: 0 16px 0 auto;
       text-align: right;
       min-width: 0;
 
@@ -119,35 +122,29 @@
       width: 80px;
       z-index: 2;
       border-radius: 0 10px 10px 0;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      transition: @transition-smooth;
 
       &::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        inset: 0;
         background: linear-gradient(
           135deg,
-          rgba(255, 255, 255, 0.2) 0%,
-          rgba(255, 255, 255, 0.1) 100%
+          rgba(255, 255, 255, 0.2),
+          rgba(255, 255, 255, 0.1)
         );
         opacity: 0;
         transition: opacity 0.3s ease;
       }
 
-      // 默认显示的编辑图标
       .default-icon {
         font-size: 20px;
         color: rgba(255, 255, 255, 0.9);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        opacity: 1;
-        transform: rotate(0deg) scale(1);
+        transition: @transition-smooth;
 
         &.expanded {
           transform: rotate(180deg) scale(1.1);
@@ -155,13 +152,9 @@
         }
       }
 
-      // 操作按钮容器
       .action-buttons {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+        inset: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -169,25 +162,29 @@
         gap: 6px;
         opacity: 0;
         transform: scale(0.8);
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: @transition-smooth;
 
         button {
           padding: 6px 10px;
           font-size: 11px;
+          font-weight: 600;
           border: none;
           border-radius: 6px;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           color: rgba(255, 255, 255, 0.95);
-          font-weight: 600;
+          cursor: pointer;
           display: flex;
           align-items: center;
           gap: 4px;
           backdrop-filter: blur(10px);
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+          transition: @transition-smooth;
 
           .anticon {
             font-size: 12px;
+          }
+
+          &:hover {
+            transform: scale(1.05) translateY(-1px);
           }
 
           &.complete-btn {
@@ -195,15 +192,12 @@
               background: rgba(82, 196, 26, 0.9);
               &:hover {
                 background: rgba(82, 196, 26, 1);
-                transform: scale(1.05) translateY(-1px);
               }
             }
-
             &.undo {
               background: rgba(250, 173, 20, 0.9);
               &:hover {
                 background: rgba(250, 173, 20, 1);
-                transform: scale(1.05) translateY(-1px);
               }
             }
           }
@@ -212,7 +206,6 @@
             background: rgba(239, 68, 68, 0.9);
             &:hover {
               background: rgba(239, 68, 68, 1);
-              transform: scale(1.05) translateY(-1px);
             }
           }
         }
@@ -222,12 +215,10 @@
         &::before {
           opacity: 1;
         }
-
         .default-icon {
           opacity: 0;
           transform: rotate(90deg) scale(0.8);
         }
-
         .action-buttons {
           opacity: 1;
           transform: scale(1);
@@ -236,18 +227,14 @@
     }
   }
 
-  // 编辑区域样式
   .edit-block {
     width: 100%;
-    overflow: auto;
     display: flex;
     flex-direction: column;
-    border-top: 1px solid var(--border-light);
+    border-top: 1px solid var(--color-border-light);
+    overflow: auto;
     will-change: height, opacity;
-    transition:
-      height 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
-      opacity 0.25s ease-in-out 0.05s,
-      padding 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: @transition-form;
 
     &.hide {
       height: 0;
@@ -286,80 +273,81 @@
         .ant-input,
         .ant-picker,
         .ant-input-affix-wrapper {
+          background: var(--color-surface-elevated);
+          border: 2px solid var(--color-border-light);
           border-radius: 8px;
-          border: 2px solid var(--border-light);
-          transition: all 0.3s ease;
           font-size: 13px;
+          transition: @transition-fast;
 
           &:focus,
           &:hover {
-            border-color: #667eea;
+            border-color: var(--color-primary);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
           }
-        }
 
-        .ant-input::placeholder {
-          color: var(--color-text-placeholder);
-          font-size: 13px;
-        }
-
-        .ant-btn {
-          border-radius: 4px;
-          font-weight: 500;
-          transition: all 0.3s;
-
-          &.ant-btn-primary {
-            background: var(--primary-color);
-            border: none;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-
-            &:hover:not(:disabled) {
-              transform: translateY(-1px);
-              box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-            }
+          .ant-input::placeholder {
+            color: var(--color-text-placeholder);
+            font-size: 13px;
           }
 
-          &:not(.ant-btn-primary) {
-            background: var(--surface-tertiary);
-            border: 1px solid var(--border-medium);
-            color: var(--color-text-secondary);
+          .ant-btn {
+            border-radius: 4px;
+            font-weight: 500;
+            transition: @transition-fast;
 
-            &:hover {
-              background: var(--surface-primary);
-              border-color: var(--border-strong);
+            &.ant-btn-primary {
+              background: var(--color-primary);
+              border: none;
+              box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+
+              &:hover:not(:disabled) {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+              }
+            }
+
+            &:not(.ant-btn-primary) {
+              background: var(--color-surface);
+              border: 1px solid var(--color-border-medium);
+              color: var(--color-text-secondary);
+
+              &:hover {
+                background: var(--color-surface-elevated);
+                border-color: var(--color-border-strong);
+              }
             }
           }
         }
       }
     }
-  }
 
-  // 完成状态样式
-  &.completed {
-    border-color: rgba(82, 196, 26, 0.2);
+    // 完成状态样式
+    &.completed {
+      border-color: rgba(82, 196, 26, 0.2);
 
-    &::before {
-      background: linear-gradient(
-        135deg,
-        rgba(82, 196, 26, 0.05) 0%,
-        rgba(34, 197, 94, 0.05) 100%
-      );
+      &::before {
+        background: linear-gradient(
+          135deg,
+          rgba(82, 196, 26, 0.05) 0%,
+          rgba(34, 197, 94, 0.05) 100%
+        );
+      }
+
+      .main-content {
+        opacity: 0.85;
+      }
+
+      &:hover {
+        border-color: rgba(82, 196, 26, 0.4);
+        opacity: 1;
+      }
     }
 
-    .main-content {
-      opacity: 0.85;
+    // 展开状态样式
+    &.expanded {
+      border-color: rgba(102, 126, 234, 0.3);
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
     }
-
-    &:hover {
-      border-color: rgba(82, 196, 26, 0.4);
-      opacity: 1;
-    }
-  }
-
-  // 展开状态样式
-  &.expanded {
-    border-color: rgba(102, 126, 234, 0.3);
-    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
   }
 
   // 动画定义
@@ -381,7 +369,6 @@
     }
   }
 
-  // 表单内容渐入动画
   @keyframes fadeInUp {
     0% {
       opacity: 0;

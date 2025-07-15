@@ -1,23 +1,31 @@
-@import url('../../variables.less');
+// Common transition variables
+@transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+@transition-fast: 0.2s ease;
 
 .task-card {
-  background-color: var(--surface-primary);
-  border: 1px solid var(--border-light);
-  border-radius: @border-radius-xl;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
   overflow: hidden;
-  transition: all @transition-normal ease;
+  transition: all @transition-smooth;
   cursor: pointer;
-  box-shadow: @box-shadow-sm-light-scheme;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
 
   &:hover {
-    box-shadow: @box-shadow-md-light-scheme;
-    border-color: var(--border-medium);
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.07),
+      0 4px 12px rgba(0, 0, 0, 0.12);
+    border-color: var(--color-border-medium);
     transform: translateY(-2px);
   }
 
   &.expanded {
-    box-shadow: @box-shadow-md-light-scheme;
-    border-color: var(--accent-color);
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.07),
+      0 4px 12px rgba(0, 0, 0, 0.12);
+    border-color: var(--color-accent);
   }
 
   .task-header {
@@ -25,28 +33,27 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px 24px;
-    background-color: var(--surface-primary);
-    transition: background-color @transition-fast ease;
+    background-color: var(--color-surface);
+    transition: background-color @transition-fast;
 
     &:hover {
-      background-color: var(--surface-secondary);
+      background-color: var(--color-surface-secondary);
     }
 
     .task-info {
       flex: 1;
 
       .task-title {
-        margin: 0;
-        font-size: @font-size-xl;
-        font-weight: @font-weight-bold;
-        color: var(--text-primary);
-        margin-bottom: 4px;
+        margin: 0 0 4px 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--color-text-primary);
       }
 
       .task-description {
         margin: 0;
-        font-size: @font-size-small;
-        color: var(--text-secondary);
+        font-size: 13px;
+        color: var(--color-text-secondary);
       }
     }
 
@@ -56,35 +63,35 @@
       gap: 16px;
 
       .progress-text {
-        font-size: @font-size-small;
-        font-weight: @font-weight-bold;
-        color: var(--text-tertiary);
-        background-color: var(--surface-tertiary);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--color-text-tertiary);
+        background-color: var(--color-surface-tertiary);
         padding: 4px 8px;
-        border-radius: @border-radius-pill;
+        border-radius: 20px;
       }
 
       .action-buttons {
         display: flex;
         gap: 4px;
         opacity: 0;
-        transition: opacity @transition-fast ease;
+        transition: opacity @transition-fast;
 
         .ant-btn {
           width: 28px;
           height: 28px;
-          border-radius: @border-radius-md;
+          border-radius: 6px;
           display: flex;
           align-items: center;
           justify-content: center;
 
           &:hover {
-            background-color: var(--surface-tertiary);
+            background-color: var(--color-surface-tertiary);
           }
 
           &.ant-btn-dangerous:hover {
-            background-color: var(--danger-soft);
-            color: var(--danger-color);
+            background-color: var(--color-danger-soft);
+            color: var(--color-danger);
           }
         }
       }
@@ -97,9 +104,9 @@
 
   .task-details {
     overflow: auto;
-    background-color: var(--surface-secondary);
-    border-top: 1px solid var(--border-light);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: var(--color-surface-secondary);
+    border-top: 1px solid var(--color-border-light);
+    transition: all @transition-smooth;
 
     &.collapsed {
       max-height: 0;
@@ -109,7 +116,7 @@
     }
 
     &.expanded {
-      max-height: 1000px; // 足够大的值来容纳内容
+      max-height: 1000px;
       padding: 24px;
       opacity: 1;
       transform: translateY(0);
@@ -120,14 +127,14 @@
 
       .ant-progress {
         .ant-progress-bg {
-          border-radius: @border-radius-sm;
+          border-radius: 4px;
         }
       }
     }
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .task-card {
     .task-header {

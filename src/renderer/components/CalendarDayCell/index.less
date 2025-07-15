@@ -1,40 +1,40 @@
+// 公共过渡效果
+@transition-smooth: all 0.2s ease;
+
 .calendar-day-cell {
-  background: white;
+  background: var(--color-surface);
   padding: 8px;
+  min-height: 80px;
+  width: 100%;
   cursor: pointer;
-  transition: all 0.2s ease;
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 80px;
-  width: 100%;
   overflow: hidden;
+  transition: @transition-smooth;
   &:hover {
-    background-color: #f9fafb;
+    background: var(--color-surface-elevated);
     transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   &.other-month {
     opacity: 0.4;
-
     .day-number {
-      color: #9ca3af;
+      color: var(--color-text-tertiary);
     }
   }
 
-  &.today {
-    .day-number {
-      background: var(--primary-color);
-      color: white;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-    }
+  &.today .day-number {
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
   }
 
   .day-header {
@@ -46,13 +46,13 @@
     .day-number {
       font-size: 14px;
       font-weight: 500;
-      color: #374151;
+      color: var(--color-text-primary);
       line-height: 1;
     }
 
     .todo-count {
-      background: #ef4444;
-      color: white;
+      background: var(--color-error);
+      color: var(--color-text-inverse);
       font-size: 11px;
       border-radius: 10px;
       padding: 2px 6px;
@@ -73,10 +73,10 @@
 
     .more-todos {
       font-size: 11px;
-      color: #6b7280;
+      color: var(--color-text-secondary);
       text-align: center;
       padding: 2px 0;
-      background-color: #f3f4f6;
+      background: var(--color-surface-elevated);
       border-radius: 4px;
       margin-top: 2px;
     }
